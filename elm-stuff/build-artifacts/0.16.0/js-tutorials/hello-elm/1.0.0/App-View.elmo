@@ -1,0 +1,155 @@
+Elm.App = Elm.App || {};
+Elm.App.View = Elm.App.View || {};
+Elm.App.View.make = function (_elm) {
+   "use strict";
+   _elm.App = _elm.App || {};
+   _elm.App.View = _elm.App.View || {};
+   if (_elm.App.View.values) return _elm.App.View.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $App$Model = Elm.App.Model.make(_elm),
+   $App$Update = Elm.App.Update.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Config$View = Elm.Config.View.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Event = Elm.Event.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$Article$View = Elm.Pages.Article.View.make(_elm),
+   $Pages$GithubAuth$View = Elm.Pages.GithubAuth.View.make(_elm),
+   $Pages$Login$View = Elm.Pages.Login.View.make(_elm),
+   $Pages$PageNotFound$View = Elm.Pages.PageNotFound.View.make(_elm),
+   $Pages$User$Model = Elm.Pages.User.Model.make(_elm),
+   $Pages$User$View = Elm.Pages.User.View.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var myStyle = _U.list([{ctor: "_Tuple2",_0: "font-size",_1: "1.2em"}]);
+   var footer = A2($Html.div,
+   _U.list([$Html$Attributes.$class("main-footer")]),
+   _U.list([A2($Html.div,
+   _U.list([$Html$Attributes.$class("container")]),
+   _U.list([A2($Html.span,
+   _U.list([]),
+   _U.list([$Html.text("With ")
+           ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart")]),_U.list([]))
+           ,$Html.text(" from ")
+           ,A2($Html.a,
+           _U.list([$Html$Attributes.href("http://gizra.com"),$Html$Attributes.target("_blank"),$Html$Attributes.$class("gizra-logo")]),
+           _U.list([$Html.text("gizra")]))
+           ,A2($Html.span,_U.list([$Html$Attributes.$class("divider")]),_U.list([$Html.text("|")]))
+           ,$Html.text("Fork me on ")
+           ,A2($Html.a,
+           _U.list([$Html$Attributes.href("https://github.com/Gizra/elm-hedley"),$Html$Attributes.target("_blank")]),
+           _U.list([$Html.text("Github")]))]))]))]));
+   var mainContent = F2(function (address,model) {
+      var _p0 = model.activePage;
+      switch (_p0.ctor)
+      {case "Article": var childAddress = A2($Signal.forwardTo,address,$App$Update.ChildArticleAction);
+           return A2($Html.div,_U.list([$Html$Attributes.style(myStyle)]),_U.list([A2($Pages$Article$View.view,childAddress,model.article)]));
+         case "Event": var context = {companies: model.companies};
+           var childAddress = A2($Signal.forwardTo,address,$App$Update.ChildEventAction);
+           return A2($Html.div,_U.list([$Html$Attributes.style(myStyle)]),_U.list([A3($Event.view,context,childAddress,model.events)]));
+         case "GithubAuth": var childAddress = A2($Signal.forwardTo,address,$App$Update.ChildGithubAuthAction);
+           return A2($Html.div,_U.list([$Html$Attributes.style(myStyle)]),_U.list([A2($Pages$GithubAuth$View.view,childAddress,model.githubAuth)]));
+         case "Login": var context = {backendConfig: function (_p1) {
+              return function (_) {
+                 return _.backendConfig;
+              }(function (_) {    return _.config;}(_p1));
+           }(model)};
+           var childAddress = A2($Signal.forwardTo,address,$App$Update.ChildLoginAction);
+           return A2($Html.div,_U.list([$Html$Attributes.style(myStyle)]),_U.list([A3($Pages$Login$View.view,context,childAddress,model.login)]));
+         case "PageNotFound": return A2($Html.div,_U.list([]),_U.list([$Pages$PageNotFound$View.view]));
+         default: var childAddress = A2($Signal.forwardTo,address,$App$Update.ChildUserAction);
+           return A2($Html.div,_U.list([$Html$Attributes.style(myStyle)]),_U.list([A2($Pages$User$View.view,childAddress,model.user)]));}
+   });
+   var isActivePage = F2(function (activePage,page) {
+      var _p2 = activePage;
+      if (_p2.ctor === "Event") {
+            return _U.eq(page,$App$Model.Event($Maybe.Nothing));
+         } else {
+            return _U.eq(activePage,page);
+         }
+   });
+   var navbarLoggedIn = F2(function (address,model) {
+      var navCollapseButton = function () {
+         var iconBar = function (index) {    return A2($Html.span,_U.list([$Html$Attributes.$class("icon-bar")]),_U.list([]));};
+         return A2($Html.button,
+         _U.list([$Html$Attributes.$class("navbar-toggle")
+                 ,A2($Html$Attributes.attribute,"data-toggle","collapse")
+                 ,A2($Html$Attributes.attribute,"data-target",".main-nav")]),
+         _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("sr-only")]),_U.list([$Html.text("Menu")]))
+                 ,A2($Html.span,_U.list([]),A2($List.map,iconBar,_U.range(0,2)))]));
+      }();
+      var hrefVoid = $Html$Attributes.href("javascript:void(0);");
+      var childAddress = A2($Signal.forwardTo,address,$App$Update.ChildUserAction);
+      var activeClass = function (page) {    return _U.list([{ctor: "_Tuple2",_0: "active",_1: A2(isActivePage,model.activePage,page)}]);};
+      return A3($Html.node,
+      "nav",
+      _U.list([$Html$Attributes.id("main-header"),$Html$Attributes.$class("navbar navbar-default")]),
+      _U.list([A2($Html.div,
+      _U.list([$Html$Attributes.$class("container")]),
+      _U.list([A2($Html.div,
+              _U.list([$Html$Attributes.$class("navbar-header")]),
+              _U.list([A2($Html.a,_U.list([$Html$Attributes.$class("brand visible-xs pull-left"),$Html$Attributes.href("#!/")]),_U.list([$Html.text("Hedley")]))
+                      ,navCollapseButton]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("collapse navbar-collapse main-nav")]),
+              _U.list([A2($Html.ul,
+              _U.list([$Html$Attributes.$class("nav navbar-nav")]),
+              _U.list([A2($Html.li,
+                      _U.list([]),
+                      _U.list([A2($Html.a,_U.list([$Html$Attributes.$class("brand hidden-xs"),$Html$Attributes.href("#!/")]),_U.list([$Html.text("Hedley")]))]))
+                      ,A2($Html.li,
+                      _U.list([$Html$Attributes.classList(activeClass($App$Model.User))]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("glyphicon glyphicon-user")]),_U.list([]))
+                              ,A2($Html.a,
+                              _U.list([hrefVoid,A2($Html$Events.onClick,address,$App$Update.SetActivePage($App$Model.User))]),
+                              _U.list([$Html.text("My account")]))]))
+                      ,A2($Html.li,
+                      _U.list([$Html$Attributes.classList(activeClass($App$Model.Event($Maybe.Nothing)))]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([]))
+                              ,A2($Html.a,
+                              _U.list([hrefVoid,A2($Html$Events.onClick,address,$App$Update.SetActivePage($App$Model.Event($Maybe.Nothing)))]),
+                              _U.list([$Html.text("Events")]))]))
+                      ,A2($Html.li,
+                      _U.list([$Html$Attributes.classList(activeClass($App$Model.Article))]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-file-o")]),_U.list([]))
+                              ,A2($Html.a,
+                              _U.list([hrefVoid,A2($Html$Events.onClick,address,$App$Update.SetActivePage($App$Model.Article))]),
+                              _U.list([$Html.text("Articles")]))]))
+                      ,A2($Html.li,
+                      _U.list([$Html$Attributes.classList(activeClass($App$Model.PageNotFound))]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-exclamation-circle")]),_U.list([]))
+                              ,A2($Html.a,_U.list([$Html$Attributes.href("#!/error-page")]),_U.list([$Html.text("PageNotFound (404)")]))]))
+                      ,A2($Html.li,
+                      _U.list([]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-sign-out")]),_U.list([]))
+                              ,A2($Html.a,
+                              _U.list([hrefVoid,A2($Html$Events.onClick,address,$App$Update.Logout)]),
+                              _U.list([$Html.text("Logout")]))]))]))]))]))]));
+   });
+   var navbar = F2(function (address,model) {
+      var _p3 = model.user.name;
+      if (_p3.ctor === "Anonymous") {
+            return A2($Html.div,_U.list([]),_U.list([]));
+         } else {
+            return A2(navbarLoggedIn,address,model);
+         }
+   });
+   var view = F2(function (address,model) {
+      return _U.eq(model.configError,true) ? $Config$View.view : A2($Html.div,
+      _U.list([]),
+      _U.list([A2(navbar,address,model),A2(mainContent,address,model),footer]));
+   });
+   return _elm.App.View.values = {_op: _op
+                                 ,isActivePage: isActivePage
+                                 ,view: view
+                                 ,mainContent: mainContent
+                                 ,navbar: navbar
+                                 ,footer: footer
+                                 ,navbarLoggedIn: navbarLoggedIn
+                                 ,myStyle: myStyle};
+};

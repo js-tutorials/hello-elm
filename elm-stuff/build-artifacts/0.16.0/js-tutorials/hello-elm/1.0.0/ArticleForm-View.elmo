@@ -1,0 +1,80 @@
+Elm.ArticleForm = Elm.ArticleForm || {};
+Elm.ArticleForm.View = Elm.ArticleForm.View || {};
+Elm.ArticleForm.View.make = function (_elm) {
+   "use strict";
+   _elm.ArticleForm = _elm.ArticleForm || {};
+   _elm.ArticleForm.View = _elm.ArticleForm.View || {};
+   if (_elm.ArticleForm.View.values) return _elm.ArticleForm.View.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $ArticleForm$Model = Elm.ArticleForm.Model.make(_elm),
+   $ArticleForm$Update = Elm.ArticleForm.Update.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var viewForm = F2(function (address,model) {
+      return A2($Html.form,
+      _U.list([A2($Html$Events.onSubmit,address,$ArticleForm$Update.SubmitForm),$Html$Attributes.action("javascript:void(0);")]),
+      _U.list([A2($Html.h3,
+              _U.list([$Html$Attributes.$class("title")]),
+              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-pencil")]),_U.list([])),$Html.text(" Add new article")]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("input-group")]),
+              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("Label")]))
+                      ,A2($Html.input,
+                      _U.list([$Html$Attributes.type$("text")
+                              ,$Html$Attributes.$class("form-control")
+                              ,$Html$Attributes.value(model.articleForm.label)
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetValue,
+                              function (_p0) {
+                                 return A2($Signal.message,address,$ArticleForm$Update.UpdateLabel(_p0));
+                              })
+                              ,$Html$Attributes.required(true)]),
+                      _U.list([]))]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("input-group")]),
+              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("Body")]))
+                      ,A2($Html.textarea,
+                      _U.list([$Html$Attributes.$class("form-control")
+                              ,$Html$Attributes.name("body")
+                              ,$Html$Attributes.placeholder("Body")
+                              ,$Html$Attributes.value(model.articleForm.body)
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetValue,
+                              function (_p1) {
+                                 return A2($Signal.message,address,$ArticleForm$Update.UpdateBody(_p1));
+                              })]),
+                      _U.list([]))]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("input-group ")]),
+              _U.list([A2($Html.label,_U.list([]),_U.list([$Html.text("Upload File")]))
+                      ,A2($Html.div,_U.list([$Html$Attributes.$class("dropzone")]),_U.list([]))]))
+              ,A2($Html.button,
+              _U.list([A2($Html$Events.onClick,address,$ArticleForm$Update.SubmitForm)
+                      ,$Html$Attributes.$class("btn btn-lg btn-primary")
+                      ,$Html$Attributes.disabled($String.isEmpty(model.articleForm.label))]),
+              _U.list([$Html.text("Submit")]))]));
+   });
+   var viewUserMessage = function (userMessage) {
+      var _p2 = userMessage;
+      if (_p2.ctor === "None") {
+            return A2($Html.div,_U.list([]),_U.list([]));
+         } else {
+            return A2($Html.div,_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "text-align",_1: "center"}]))]),_U.list([$Html.text(_p2._0)]));
+         }
+   };
+   var view = F2(function (address,model) {
+      return A2($Html.div,_U.list([$Html$Attributes.$class("wrapper -suffix")]),_U.list([viewUserMessage(model.userMessage),A2(viewForm,address,model)]));
+   });
+   return _elm.ArticleForm.View.values = {_op: _op,view: view,viewUserMessage: viewUserMessage,viewForm: viewForm};
+};

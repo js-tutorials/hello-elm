@@ -1,0 +1,23 @@
+Elm.Config = Elm.Config || {};
+Elm.Config.View = Elm.Config.View || {};
+Elm.Config.View.make = function (_elm) {
+   "use strict";
+   _elm.Config = _elm.Config || {};
+   _elm.Config.View = _elm.Config.View || {};
+   if (_elm.Config.View.values) return _elm.Config.View.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var view = A2($Html.div,
+   _U.list([$Html$Attributes.$class("config-error")]),
+   _U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text("Configuration error")]))
+           ,A2($Html.div,_U.list([]),_U.list([$Html.text("Check your Config.elm file and make sure you have defined the enviorement properly")]))]));
+   return _elm.Config.View.values = {_op: _op,view: view};
+};

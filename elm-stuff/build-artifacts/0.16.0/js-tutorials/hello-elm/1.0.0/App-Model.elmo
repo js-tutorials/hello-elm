@@ -1,0 +1,82 @@
+Elm.App = Elm.App || {};
+Elm.App.Model = Elm.App.Model || {};
+Elm.App.Model.make = function (_elm) {
+   "use strict";
+   _elm.App = _elm.App || {};
+   _elm.App.Model = _elm.App.Model || {};
+   if (_elm.App.Model.values) return _elm.App.Model.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Company$Model = Elm.Company.Model.make(_elm),
+   $Config$Model = Elm.Config.Model.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Event = Elm.Event.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$Article$Model = Elm.Pages.Article.Model.make(_elm),
+   $Pages$GithubAuth$Model = Elm.Pages.GithubAuth.Model.make(_elm),
+   $Pages$Login$Model = Elm.Pages.Login.Model.make(_elm),
+   $Pages$User$Model = Elm.Pages.User.Model.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var Model = function (a) {
+      return function (b) {
+         return function (c) {
+            return function (d) {
+               return function (e) {
+                  return function (f) {
+                     return function (g) {
+                        return function (h) {
+                           return function (i) {
+                              return function (j) {
+                                 return function (k) {
+                                    return {accessToken: a
+                                           ,activePage: b
+                                           ,article: c
+                                           ,config: d
+                                           ,configError: e
+                                           ,companies: f
+                                           ,events: g
+                                           ,githubAuth: h
+                                           ,login: i
+                                           ,nextPage: j
+                                           ,user: k};
+                                 };
+                              };
+                           };
+                        };
+                     };
+                  };
+               };
+            };
+         };
+      };
+   };
+   var User = {ctor: "User"};
+   var PageNotFound = {ctor: "PageNotFound"};
+   var Login = {ctor: "Login"};
+   var initialModel = {accessToken: ""
+                      ,activePage: Login
+                      ,article: $Pages$Article$Model.initialModel
+                      ,config: $Config$Model.initialModel
+                      ,configError: false
+                      ,companies: _U.list([])
+                      ,events: $Event.initialModel
+                      ,githubAuth: $Pages$GithubAuth$Model.initialModel
+                      ,login: $Pages$Login$Model.initialModel
+                      ,nextPage: $Maybe.Nothing
+                      ,user: $Pages$User$Model.initialModel};
+   var GithubAuth = {ctor: "GithubAuth"};
+   var Event = function (a) {    return {ctor: "Event",_0: a};};
+   var Article = {ctor: "Article"};
+   return _elm.App.Model.values = {_op: _op
+                                  ,Article: Article
+                                  ,Event: Event
+                                  ,GithubAuth: GithubAuth
+                                  ,Login: Login
+                                  ,PageNotFound: PageNotFound
+                                  ,User: User
+                                  ,Model: Model
+                                  ,initialModel: initialModel};
+};

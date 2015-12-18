@@ -1,0 +1,425 @@
+Elm.Event = Elm.Event || {};
+Elm.Event.make = function (_elm) {
+   "use strict";
+   _elm.Event = _elm.Event || {};
+   if (_elm.Event.values) return _elm.Event.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Company$Model = Elm.Company.Model.make(_elm),
+   $Config = Elm.Config.make(_elm),
+   $Config$Model = Elm.Config.Model.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $Leaflet$Model = Elm.Leaflet.Model.make(_elm),
+   $Leaflet$Update = Elm.Leaflet.Update.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $RouteHash = Elm.RouteHash.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $TaskTutorial = Elm.TaskTutorial.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var location2company = function (list) {
+      var _p0 = $List.head(list);
+      if (_p0.ctor === "Just") {
+            var _p1 = $String.toInt(_p0._0);
+            if (_p1.ctor === "Ok") {
+                  return $Maybe.Just(_p1._0);
+               } else {
+                  return $Maybe.Nothing;
+               }
+         } else {
+            return $Maybe.Nothing;
+         }
+   };
+   var delta2update = F2(function (previous,current) {
+      var url = function () {
+         var _p2 = current.selectedCompany;
+         if (_p2.ctor === "Just") {
+               return _U.list([$Basics.toString(_p2._0)]);
+            } else {
+               return _U.list([]);
+            }
+      }();
+      return $Maybe.Just($RouteHash.set(url));
+   });
+   var isFetched = function (status) {    var _p3 = status;if (_p3.ctor === "Fetched") {    return true;} else {    return false;}};
+   var viewEventInfo = function (model) {
+      var _p4 = model.selectedEvent;
+      if (_p4.ctor === "Just") {
+            var selectedEvent = A2($List.filter,function (event) {    return _U.eq(event.id,_p4._0);},model.events);
+            return A2($Html.div,
+            _U.list([]),
+            A2($List.map,
+            function (event) {
+               return $Html.text(A2($Basics._op["++"],
+               $Basics.toString(event.id),
+               A2($Basics._op["++"],") ",A2($Basics._op["++"],event.label,A2($Basics._op["++"]," by ",event.author.name)))));
+            },
+            selectedEvent));
+         } else {
+            return A2($Html.div,_U.list([]),_U.list([]));
+         }
+   };
+   var filterListEvents = function (model) {
+      var stringFilter = function (events) {
+         return _U.cmp($String.length($String.trim(model.filterString)),0) > 0 ? A2($List.filter,
+         function (event) {
+            return A2($String.contains,$String.trim($String.toLower(model.filterString)),$String.toLower(event.label));
+         },
+         events) : events;
+      };
+      var authorFilter = function (events) {
+         var _p5 = model.selectedAuthor;
+         if (_p5.ctor === "Just") {
+               return A2($List.filter,function (event) {    return _U.eq(event.author.id,_p5._0);},events);
+            } else {
+               return events;
+            }
+      };
+      return stringFilter(authorFilter(model.events));
+   };
+   var groupEventsByAuthors = function (events) {
+      var handleEvent = F2(function (event,dict) {
+         var currentValue = A2($Maybe.withDefault,{ctor: "_Tuple2",_0: event.author,_1: 0},A2($Dict.get,event.author.id,dict));
+         var newValue = function () {    var _p6 = currentValue;return {ctor: "_Tuple2",_0: _p6._0,_1: _p6._1 + 1};}();
+         return A3($Dict.insert,event.author.id,newValue,dict);
+      });
+      return A3($List.foldl,handleEvent,$Dict.empty,events);
+   };
+   var mapStyle = _U.list([{ctor: "_Tuple2",_0: "width",_1: "600px"},{ctor: "_Tuple2",_0: "height",_1: "400px"}]);
+   var leafletMarkers = function (model) {
+      return A2($List.map,function (event) {    return A3($Leaflet$Model.Marker,event.id,event.marker.lat,event.marker.lng);},filterListEvents(model));
+   };
+   var ViewContext = function (a) {    return {companies: a};};
+   var UpdateContext = F3(function (a,b,c) {    return {accessToken: a,backendConfig: b,companies: c};});
+   var Deactivate = {ctor: "Deactivate"};
+   var Activate = function (a) {    return {ctor: "Activate",_0: a};};
+   var ChildLeafletAction = function (a) {    return {ctor: "ChildLeafletAction",_0: a};};
+   var FilterEvents = function (a) {    return {ctor: "FilterEvents",_0: a};};
+   var viewFilterString = F2(function (address,model) {
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.input,
+      _U.list([$Html$Attributes.placeholder("Filter events")
+              ,$Html$Attributes.value(model.filterString)
+              ,A3($Html$Events.on,"input",$Html$Events.targetValue,function (_p7) {    return A2($Signal.message,address,FilterEvents(_p7));})]),
+      _U.list([]))]));
+   });
+   var UnSelectAuthor = {ctor: "UnSelectAuthor"};
+   var SelectAuthor = function (a) {    return {ctor: "SelectAuthor",_0: a};};
+   var viewEventsByAuthors = F3(function (address,events,selectedAuthor) {
+      var getText = F2(function (author,count) {
+         var authorRaw = $Html.text(A2($Basics._op["++"],author.name,A2($Basics._op["++"]," (",A2($Basics._op["++"],$Basics.toString(count),")"))));
+         var authorSelect = A2($Html.a,
+         _U.list([$Html$Attributes.href("javascript:void(0);"),A2($Html$Events.onClick,address,SelectAuthor(author.id))]),
+         _U.list([authorRaw]));
+         var authorUnselect = A2($Html.span,
+         _U.list([]),
+         _U.list([A2($Html.a,
+                 _U.list([$Html$Attributes.href("javascript:void(0);"),A2($Html$Events.onClick,address,UnSelectAuthor)]),
+                 _U.list([$Html.text("x ")]))
+                 ,authorRaw]));
+         var _p8 = selectedAuthor;
+         if (_p8.ctor === "Just") {
+               return _U.eq(author.id,_p8._0) ? authorUnselect : authorSelect;
+            } else {
+               return authorSelect;
+            }
+      });
+      var viewAuthor = function (_p9) {    var _p10 = _p9;return A2($Html.li,_U.list([]),_U.list([A2(getText,_p10._0,_p10._1)]));};
+      return A2($List.map,viewAuthor,$Dict.values(groupEventsByAuthors(events)));
+   });
+   var UnSelectEvent = {ctor: "UnSelectEvent"};
+   var SelectEvent = function (a) {    return {ctor: "SelectEvent",_0: a};};
+   var viewListEvents = F2(function (address,model) {
+      var eventUnselect = function (event) {
+         return A2($Html.li,
+         _U.list([]),
+         _U.list([A2($Html.span,
+         _U.list([]),
+         _U.list([A2($Html.a,_U.list([$Html$Attributes.href("javascript:void(0);"),A2($Html$Events.onClick,address,UnSelectEvent)]),_U.list([$Html.text("x ")]))
+                 ,$Html.text(event.label)]))]));
+      };
+      var hrefVoid = $Html$Attributes.href("javascript:void(0);");
+      var eventSelect = function (event) {
+         return A2($Html.li,
+         _U.list([]),
+         _U.list([A2($Html.a,_U.list([hrefVoid,A2($Html$Events.onClick,address,SelectEvent($Maybe.Just(event.id)))]),_U.list([$Html.text(event.label)]))]));
+      };
+      var getListItem = function (event) {
+         var _p11 = model.selectedEvent;
+         if (_p11.ctor === "Just") {
+               return _U.eq(event.id,_p11._0) ? eventUnselect(event) : eventSelect(event);
+            } else {
+               return eventSelect(event);
+            }
+      };
+      var filteredEvents = filterListEvents(model);
+      return $Basics.not($List.isEmpty(filteredEvents)) ? A2($Html.ul,_U.list([]),A2($List.map,getListItem,filteredEvents)) : A2($Html.div,
+      _U.list([]),
+      _U.list([$Html.text("No results found")]));
+   });
+   var SelectCompany = function (a) {    return {ctor: "SelectCompany",_0: a};};
+   var companyListForSelect = F3(function (address,companies,selectedCompany) {
+      var selectedId = function () {    var _p12 = selectedCompany;if (_p12.ctor === "Just") {    return _p12._0;} else {    return 0;}}();
+      var getOption = function (company) {
+         return A2($Html.option,
+         _U.list([$Html$Attributes.value($Basics.toString(company.id)),$Html$Attributes.selected(_U.eq(company.id,selectedId))]),
+         _U.list([$Html.text(company.label)]));
+      };
+      var companies$ = A2($List._op["::"],A2($Company$Model.Model,0,"-- All companies --"),companies);
+      var textToMaybe = function (string) {
+         if (_U.eq(string,"0")) return $Maybe.Nothing; else {
+               var _p13 = $String.toInt(string);
+               if (_p13.ctor === "Ok") {
+                     return $Maybe.Just(_p13._0);
+                  } else {
+                     return $Maybe.Nothing;
+                  }
+            }
+      };
+      var selectedText = function () {    var _p14 = selectedCompany;if (_p14.ctor === "Just") {    return $Basics.toString(_p14._0);} else {    return "";}}();
+      return A2($Html.select,
+      _U.list([$Html$Attributes.value(selectedText)
+              ,A3($Html$Events.on,"change",$Html$Events.targetValue,function (str) {    return A2($Signal.message,address,SelectCompany(textToMaybe(str)));})]),
+      A2($List.map,getOption,companies$));
+   });
+   var view = F3(function (context,address,model) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("container")]),
+      _U.list([A2($Html.div,
+      _U.list([$Html$Attributes.$class("row")]),
+      _U.list([A2($Html.div,
+              _U.list([$Html$Attributes.$class("col-md-3")]),
+              _U.list([A2($Html.div,
+                      _U.list([]),
+                      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("h2")]),_U.list([$Html.text("Companies")]))
+                              ,A3(companyListForSelect,address,context.companies,model.selectedCompany)]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("h2")]),_U.list([$Html.text("Event Authors")]))
+                              ,A2($Html.ul,_U.list([]),A3(viewEventsByAuthors,address,model.events,model.selectedAuthor))
+                              ,A2($Html.div,_U.list([$Html$Attributes.hidden(isFetched(model.status))]),_U.list([$Html.text("Loading...")]))]))
+                      ,A2($Html.div,
+                      _U.list([]),
+                      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("h2")]),_U.list([$Html.text("Event list")]))
+                              ,A2(viewFilterString,address,model)
+                              ,A2(viewListEvents,address,model)]))]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("col-md-9")]),
+              _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("h2")]),_U.list([$Html.text("Map")]))
+                      ,A2($Html.div,_U.list([$Html$Attributes.style(mapStyle),$Html$Attributes.id("map")]),_U.list([]))
+                      ,viewEventInfo(model)]))]))]));
+   });
+   var UpdateDataFromServer = F3(function (a,b,c) {    return {ctor: "UpdateDataFromServer",_0: a,_1: b,_2: c};});
+   var GetDataFromServer = function (a) {    return {ctor: "GetDataFromServer",_0: a};};
+   var GetData = function (a) {    return {ctor: "GetData",_0: a};};
+   var NoOp = {ctor: "NoOp"};
+   var getDataFromCache = F2(function (status,maybeCompanyId) {
+      var getFx = $Task.succeed(GetDataFromServer(maybeCompanyId));
+      var actionTask = function () {
+         var _p15 = status;
+         if (_p15.ctor === "Fetched") {
+               return _U.eq(_p15._0,maybeCompanyId) ? A2($Task.map,
+               function (currentTime) {
+                  return _U.cmp(_p15._1 + $Config.cacheTtl,currentTime) > 0 ? NoOp : GetDataFromServer(maybeCompanyId);
+               },
+               $TaskTutorial.getCurrentTime) : getFx;
+            } else {
+               return getFx;
+            }
+      }();
+      return $Effects.task(actionTask);
+   });
+   var Model = F7(function (a,b,c,d,e,f,g) {
+      return {events: a,status: b,selectedCompany: c,selectedEvent: d,selectedAuthor: e,filterString: f,leaflet: g};
+   });
+   var Event = F4(function (a,b,c,d) {    return {id: a,label: b,marker: c,author: d};});
+   var Author = F2(function (a,b) {    return {id: a,name: b};});
+   var Marker = F2(function (a,b) {    return {lat: a,lng: b};});
+   var decodeData = function () {
+      var numberFloat = $Json$Decode.oneOf(_U.list([$Json$Decode.$float,A2($Json$Decode.customDecoder,$Json$Decode.string,$String.toFloat)]));
+      var marker = A3($Json$Decode.object2,Marker,A2($Json$Decode._op[":="],"lat",numberFloat),A2($Json$Decode._op[":="],"lng",numberFloat));
+      var number = $Json$Decode.oneOf(_U.list([$Json$Decode.$int,A2($Json$Decode.customDecoder,$Json$Decode.string,$String.toInt)]));
+      var author = A3($Json$Decode.object2,Author,A2($Json$Decode._op[":="],"id",number),A2($Json$Decode._op[":="],"label",$Json$Decode.string));
+      return A2($Json$Decode.at,
+      _U.list(["data"]),
+      $Json$Decode.list(A5($Json$Decode.object4,
+      Event,
+      A2($Json$Decode._op[":="],"id",number),
+      A2($Json$Decode._op[":="],"label",$Json$Decode.string),
+      A2($Json$Decode._op[":="],"location",marker),
+      A2($Json$Decode._op[":="],"user",author))));
+   }();
+   var getJson = F3(function (url,maybeCompanyId,accessToken) {
+      var params = _U.list([{ctor: "_Tuple2",_0: "access_token",_1: accessToken}]);
+      var params$ = function () {
+         var _p16 = maybeCompanyId;
+         if (_p16.ctor === "Just") {
+               return A2($List._op["::"],{ctor: "_Tuple2",_0: "filter[company]",_1: $Basics.toString(_p16._0)},params);
+            } else {
+               return params;
+            }
+      }();
+      var encodedUrl = A2($Http.url,url,params$);
+      var httpTask = $Task.toResult(A2($Http.get,decodeData,encodedUrl));
+      var actionTask = A2($Task.andThen,
+      httpTask,
+      function (result) {
+         return A2($Task.map,function (timestamp) {    return A3(UpdateDataFromServer,result,maybeCompanyId,timestamp);},$TaskTutorial.getCurrentTime);
+      });
+      return $Effects.task(actionTask);
+   });
+   var HttpError = function (a) {    return {ctor: "HttpError",_0: a};};
+   var Fetched = F2(function (a,b) {    return {ctor: "Fetched",_0: a,_1: b};});
+   var Fetching = function (a) {    return {ctor: "Fetching",_0: a};};
+   var update = F3(function (context,action,model) {
+      var _p17 = action;
+      switch (_p17.ctor)
+      {case "NoOp": return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
+         case "GetData": var _p19 = _p17._0;
+           var getFx = {ctor: "_Tuple2",_0: model,_1: A2(getDataFromCache,model.status,_p19)};
+           var noFx = {ctor: "_Tuple2",_0: model,_1: $Effects.none};
+           var _p18 = model.status;
+           if (_p18.ctor === "Fetching") {
+                 return _U.eq(_p18._0,_p19) ? noFx : getFx;
+              } else {
+                 return getFx;
+              }
+         case "GetDataFromServer": var _p21 = _p17._0;
+           var backendUrl = function (_p20) {    return function (_) {    return _.backendUrl;}(function (_) {    return _.backendConfig;}(_p20));}(context);
+           var url = A2($Basics._op["++"],backendUrl,"/api/v1.0/events");
+           return {ctor: "_Tuple2",_0: _U.update(model,{status: Fetching(_p21)}),_1: A3(getJson,url,_p21,context.accessToken)};
+         case "UpdateDataFromServer": var _p22 = _p17._0;
+           if (_p22.ctor === "Ok") {
+                 return {ctor: "_Tuple2"
+                        ,_0: _U.update(model,{events: _p22._0,status: A2(Fetched,_p17._1,_p17._2)})
+                        ,_1: $Effects.task($Task.succeed(FilterEvents(model.filterString)))};
+              } else {
+                 return {ctor: "_Tuple2",_0: _U.update(model,{status: HttpError(_p22._0)}),_1: $Effects.none};
+              }
+         case "SelectCompany": var isValidCompany = function (val) {
+              return $List.length(A2($List.filter,function (company) {    return _U.eq(company.id,val);},context.companies));
+           };
+           var selectedCompany = function () {
+              var _p23 = _p17._0;
+              if (_p23.ctor === "Just") {
+                    var _p24 = _p23._0;
+                    return _U.cmp(isValidCompany(_p24),0) > 0 ? $Maybe.Just(_p24) : $Maybe.Nothing;
+                 } else {
+                    return $Maybe.Nothing;
+                 }
+           }();
+           return {ctor: "_Tuple2",_0: _U.update(model,{selectedCompany: selectedCompany}),_1: $Effects.task($Task.succeed(GetData(selectedCompany)))};
+         case "SelectEvent": var _p25 = _p17._0;
+           if (_p25.ctor === "Just") {
+                 var _p26 = _p25._0;
+                 return {ctor: "_Tuple2"
+                        ,_0: _U.update(model,{selectedEvent: $Maybe.Just(_p26)})
+                        ,_1: $Effects.task($Task.succeed(ChildLeafletAction($Leaflet$Update.SelectMarker($Maybe.Just(_p26)))))};
+              } else {
+                 return {ctor: "_Tuple2",_0: model,_1: $Effects.task($Task.succeed(UnSelectEvent))};
+              }
+         case "UnSelectEvent": return {ctor: "_Tuple2"
+                                      ,_0: _U.update(model,{selectedEvent: $Maybe.Nothing})
+                                      ,_1: $Effects.task($Task.succeed(ChildLeafletAction($Leaflet$Update.SelectMarker($Maybe.Nothing))))};
+         case "SelectAuthor": return {ctor: "_Tuple2"
+                                     ,_0: _U.update(model,{selectedAuthor: $Maybe.Just(_p17._0)})
+                                     ,_1: $Effects.batch(_U.list([$Effects.task($Task.succeed(UnSelectEvent))
+                                                                 ,$Effects.task($Task.succeed(FilterEvents(model.filterString)))]))};
+         case "UnSelectAuthor": return {ctor: "_Tuple2"
+                                       ,_0: _U.update(model,{selectedAuthor: $Maybe.Nothing})
+                                       ,_1: $Effects.batch(_U.list([$Effects.task($Task.succeed(UnSelectEvent))
+                                                                   ,$Effects.task($Task.succeed(FilterEvents(model.filterString)))]))};
+         case "FilterEvents": var _p28 = _p17._0;
+           var leaflet = model.leaflet;
+           var model$ = _U.update(model,{filterString: _p28});
+           var leaflet$ = _U.update(leaflet,{markers: leafletMarkers(model$)});
+           var effects = function () {
+              var _p27 = model.selectedEvent;
+              if (_p27.ctor === "Just") {
+                    var isSelectedEvent = $List.length(A2($List.filter,function (event) {    return _U.eq(event.id,_p27._0);},filterListEvents(model$)));
+                    return _U.cmp(isSelectedEvent,0) > 0 ? $Effects.none : $Effects.task($Task.succeed(UnSelectEvent));
+                 } else {
+                    return $Effects.none;
+                 }
+           }();
+           return {ctor: "_Tuple2",_0: _U.update(model,{filterString: _p28,leaflet: leaflet$}),_1: effects};
+         case "ChildLeafletAction": var _p29 = A2($Leaflet$Update.update,_p17._0,model.leaflet);
+           var childModel = _p29._0;
+           var childEffects = _p29._1;
+           return {ctor: "_Tuple2",_0: _U.update(model,{leaflet: childModel}),_1: A2($Effects.map,ChildLeafletAction,childEffects)};
+         case "Activate": var _p30 = A2($Leaflet$Update.update,$Leaflet$Update.ToggleMap,model.leaflet);
+           var childModel = _p30._0;
+           var childEffects = _p30._1;
+           return {ctor: "_Tuple2"
+                  ,_0: _U.update(model,{leaflet: childModel})
+                  ,_1: $Effects.batch(_U.list([$Effects.task($Task.succeed(SelectCompany(_p17._0))),A2($Effects.map,ChildLeafletAction,childEffects)]))};
+         default: var _p31 = A2($Leaflet$Update.update,$Leaflet$Update.ToggleMap,model.leaflet);
+           var childModel = _p31._0;
+           var childEffects = _p31._1;
+           return {ctor: "_Tuple2",_0: _U.update(model,{leaflet: childModel}),_1: A2($Effects.map,ChildLeafletAction,childEffects)};}
+   });
+   var Init = {ctor: "Init"};
+   var initialModel = {events: _U.list([])
+                      ,status: Init
+                      ,selectedCompany: $Maybe.Nothing
+                      ,selectedEvent: $Maybe.Nothing
+                      ,selectedAuthor: $Maybe.Nothing
+                      ,filterString: ""
+                      ,leaflet: $Leaflet$Model.initialModel};
+   var init = {ctor: "_Tuple2",_0: initialModel,_1: $Effects.none};
+   return _elm.Event.values = {_op: _op
+                              ,Init: Init
+                              ,Fetching: Fetching
+                              ,Fetched: Fetched
+                              ,HttpError: HttpError
+                              ,Marker: Marker
+                              ,Author: Author
+                              ,Event: Event
+                              ,Model: Model
+                              ,initialModel: initialModel
+                              ,init: init
+                              ,NoOp: NoOp
+                              ,GetData: GetData
+                              ,GetDataFromServer: GetDataFromServer
+                              ,UpdateDataFromServer: UpdateDataFromServer
+                              ,SelectCompany: SelectCompany
+                              ,SelectEvent: SelectEvent
+                              ,UnSelectEvent: UnSelectEvent
+                              ,SelectAuthor: SelectAuthor
+                              ,UnSelectAuthor: UnSelectAuthor
+                              ,FilterEvents: FilterEvents
+                              ,ChildLeafletAction: ChildLeafletAction
+                              ,Activate: Activate
+                              ,Deactivate: Deactivate
+                              ,UpdateContext: UpdateContext
+                              ,ViewContext: ViewContext
+                              ,update: update
+                              ,leafletMarkers: leafletMarkers
+                              ,view: view
+                              ,companyListForSelect: companyListForSelect
+                              ,mapStyle: mapStyle
+                              ,groupEventsByAuthors: groupEventsByAuthors
+                              ,viewEventsByAuthors: viewEventsByAuthors
+                              ,filterListEvents: filterListEvents
+                              ,viewFilterString: viewFilterString
+                              ,viewListEvents: viewListEvents
+                              ,viewEventInfo: viewEventInfo
+                              ,isFetched: isFetched
+                              ,getDataFromCache: getDataFromCache
+                              ,getJson: getJson
+                              ,decodeData: decodeData
+                              ,delta2update: delta2update
+                              ,location2company: location2company};
+};

@@ -1,0 +1,29 @@
+Elm.Utils = Elm.Utils || {};
+Elm.Utils.Http = Elm.Utils.Http || {};
+Elm.Utils.Http.make = function (_elm) {
+   "use strict";
+   _elm.Utils = _elm.Utils || {};
+   _elm.Utils.Http = _elm.Utils.Http || {};
+   if (_elm.Utils.Http.values) return _elm.Utils.Http.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var getErrorMessageFromHttpResponse = function (err) {
+      var _p0 = err;
+      switch (_p0.ctor)
+      {case "Timeout": return "Connection has timed out";
+         case "BadResponse": var _p1 = _p0._0;
+           return _U.eq(_p1,401) ? "Wrong username or password" : _U.eq(_p1,
+           429) ? "Too many login requests with the wrong username or password. Wait a few hours before trying again" : _U.cmp(_p1,
+           500) > -1 ? "Some error has occured on the server" : "Unknow error has occured";
+         case "NetworkError": return "A network error has occured";
+         default: return A2($Basics._op["++"],"Unknow error has occured: ",_p0._0);}
+   };
+   return _elm.Utils.Http.values = {_op: _op,getErrorMessageFromHttpResponse: getErrorMessageFromHttpResponse};
+};

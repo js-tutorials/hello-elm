@@ -1,0 +1,98 @@
+Elm.Pages = Elm.Pages || {};
+Elm.Pages.GithubAuth = Elm.Pages.GithubAuth || {};
+Elm.Pages.GithubAuth.Update = Elm.Pages.GithubAuth.Update || {};
+Elm.Pages.GithubAuth.Update.make = function (_elm) {
+   "use strict";
+   _elm.Pages = _elm.Pages || {};
+   _elm.Pages.GithubAuth = _elm.Pages.GithubAuth || {};
+   _elm.Pages.GithubAuth.Update = _elm.Pages.GithubAuth.Update || {};
+   if (_elm.Pages.GithubAuth.Update.values) return _elm.Pages.GithubAuth.Update.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Config$Model = Elm.Config.Model.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $Json$Encode = Elm.Json.Encode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$GithubAuth$Model = Elm.Pages.GithubAuth.Model.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $UrlParameterParser = Elm.UrlParameterParser.make(_elm),
+   $WebAPI$Location = Elm.WebAPI.Location.make(_elm);
+   var _op = {};
+   var decodeAccessToken = A2($Json$Decode.at,_U.list(["access_token"]),$Json$Decode.string);
+   var dataToJson = function (code) {
+      return A2($Json$Encode.encode,0,$Json$Encode.object(_U.list([{ctor: "_Tuple2",_0: "code",_1: $Json$Encode.string(code)}])));
+   };
+   var UpdateContext = function (a) {    return {backendConfig: a};};
+   var UpdateAccessTokenFromServer = function (a) {    return {ctor: "UpdateAccessTokenFromServer",_0: a};};
+   var getJson = F2(function (backendUrl,code) {
+      return $Effects.task(A2($Task.map,
+      UpdateAccessTokenFromServer,
+      $Task.toResult(A3($Http.post,decodeAccessToken,A2($Basics._op["++"],backendUrl,"/auth/github"),$Http.string(dataToJson(code))))));
+   });
+   var SetAccessToken = function (a) {    return {ctor: "SetAccessToken",_0: a};};
+   var SetError = function (a) {    return {ctor: "SetError",_0: a};};
+   var AuthorizeUser = function (a) {    return {ctor: "AuthorizeUser",_0: a};};
+   var getCodeFromUrl = function () {
+      var errAction = SetError("code property is missing form URL.");
+      var getAction = function (location) {
+         var _p0 = $UrlParameterParser.parseSearchString(location.search);
+         if (_p0.ctor === "UrlParams") {
+               var _p1 = A2($Dict.get,"code",_p0._0);
+               if (_p1.ctor === "Just") {
+                     return AuthorizeUser(_p1._0);
+                  } else {
+                     return errAction;
+                  }
+            } else {
+               return errAction;
+            }
+      };
+      var actionTask = A2($Task.map,getAction,$WebAPI$Location.location);
+      return $Effects.task(actionTask);
+   }();
+   var update = F3(function (context,action,model) {
+      var _p2 = action;
+      switch (_p2.ctor)
+      {case "Activate": return {ctor: "_Tuple2",_0: model,_1: getCodeFromUrl};
+         case "AuthorizeUser": var backendUrl = function (_p3) {
+              return function (_) {
+                 return _.backendUrl;
+              }(function (_) {    return _.backendConfig;}(_p3));
+           }(context);
+           return {ctor: "_Tuple2",_0: model,_1: A2(getJson,backendUrl,_p2._0)};
+         case "SetError": return {ctor: "_Tuple2",_0: _U.update(model,{status: $Pages$GithubAuth$Model.Error(_p2._0)}),_1: $Effects.none};
+         case "SetAccessToken": return {ctor: "_Tuple2",_0: _U.update(model,{accessToken: _p2._0}),_1: $Effects.none};
+         default: var _p4 = _p2._0;
+           if (_p4.ctor === "Ok") {
+                 return {ctor: "_Tuple2"
+                        ,_0: _U.update(model,{status: $Pages$GithubAuth$Model.Fetched})
+                        ,_1: $Effects.task($Task.succeed(SetAccessToken(_p4._0)))};
+              } else {
+                 return {ctor: "_Tuple2"
+                        ,_0: _U.update(model,{status: $Pages$GithubAuth$Model.HttpError(_p4._0)})
+                        ,_1: $Effects.task($Task.succeed(SetError("HTTP error")))};
+              }}
+   });
+   var Activate = {ctor: "Activate"};
+   var init = {ctor: "_Tuple2",_0: $Pages$GithubAuth$Model.initialModel,_1: $Effects.none};
+   return _elm.Pages.GithubAuth.Update.values = {_op: _op
+                                                ,init: init
+                                                ,Activate: Activate
+                                                ,AuthorizeUser: AuthorizeUser
+                                                ,SetError: SetError
+                                                ,SetAccessToken: SetAccessToken
+                                                ,UpdateAccessTokenFromServer: UpdateAccessTokenFromServer
+                                                ,UpdateContext: UpdateContext
+                                                ,update: update
+                                                ,getCodeFromUrl: getCodeFromUrl
+                                                ,getJson: getJson
+                                                ,dataToJson: dataToJson
+                                                ,decodeAccessToken: decodeAccessToken};
+};

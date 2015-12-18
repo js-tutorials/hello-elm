@@ -1,0 +1,19 @@
+Elm.Article = Elm.Article || {};
+Elm.Article.Model = Elm.Article.Model || {};
+Elm.Article.Model.make = function (_elm) {
+   "use strict";
+   _elm.Article = _elm.Article || {};
+   _elm.Article.Model = _elm.Article.Model || {};
+   if (_elm.Article.Model.values) return _elm.Article.Model.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var Author = F2(function (a,b) {    return {id: a,name: b};});
+   var Model = F5(function (a,b,c,d,e) {    return {author: a,body: b,id: c,image: d,label: e};});
+   return _elm.Article.Model.values = {_op: _op,Model: Model,Author: Author};
+};

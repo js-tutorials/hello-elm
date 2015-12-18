@@ -1,0 +1,32 @@
+Elm.Pages = Elm.Pages || {};
+Elm.Pages.Article = Elm.Pages.Article || {};
+Elm.Pages.Article.View = Elm.Pages.Article.View || {};
+Elm.Pages.Article.View.make = function (_elm) {
+   "use strict";
+   _elm.Pages = _elm.Pages || {};
+   _elm.Pages.Article = _elm.Pages.Article || {};
+   _elm.Pages.Article.View = _elm.Pages.Article.View || {};
+   if (_elm.Pages.Article.View.values) return _elm.Pages.Article.View.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $ArticleForm$View = Elm.ArticleForm.View.make(_elm),
+   $ArticleList$View = Elm.ArticleList.View.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$Article$Model = Elm.Pages.Article.Model.make(_elm),
+   $Pages$Article$Update = Elm.Pages.Article.Update.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var view = F2(function (address,model) {
+      var childArticleListAddress = A2($Signal.forwardTo,address,$Pages$Article$Update.ChildArticleListAction);
+      var childArticleFormAddress = A2($Signal.forwardTo,address,$Pages$Article$Update.ChildArticleFormAction);
+      return A2($Html.div,
+      _U.list([$Html$Attributes.id("article-page"),$Html$Attributes.$class("container")]),
+      _U.list([A2($ArticleForm$View.view,childArticleFormAddress,model.articleForm),A2($ArticleList$View.view,childArticleListAddress,model.articleList)]));
+   });
+   return _elm.Pages.Article.View.values = {_op: _op,view: view};
+};

@@ -1,0 +1,113 @@
+Elm.RouteHash = Elm.RouteHash || {};
+Elm.RouteHash.make = function (_elm) {
+   "use strict";
+   _elm.RouteHash = _elm.RouteHash || {};
+   if (_elm.RouteHash.values) return _elm.RouteHash.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $History = Elm.History.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Signal$Extra = Elm.Signal.Extra.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var list2hash = F2(function (prefix,list) {    return A2($Basics._op["++"],prefix,A2($String.join,"/",A2($List.map,$Http.uriEncode,list)));});
+   var removeInitial = F2(function (initial,original) {
+      var _p0 = $String.uncons(original);
+      if (_p0.ctor === "Just" && _p0._0.ctor === "_Tuple2") {
+            return _U.eq(_p0._0._0,initial) ? _p0._0._1 : original;
+         } else {
+            return original;
+         }
+   });
+   var removeInitialSequence = F2(function (initial,original) {    return A3($String.foldl,removeInitial,original,initial);});
+   var hash2list = function (prefix) {
+      return function (_p1) {
+         return A2($List.map,$Http.uriDecode,A2($String.split,"/",A2(removeInitialSequence,prefix,_p1)));
+      };
+   };
+   var defaultPrefix = "#!/";
+   var Config = F5(function (a,b,c,d,e) {    return {prefix: a,models: b,delta2update: c,location2action: d,address: e};});
+   var extract = function (action) {    var _p2 = action;if (_p2.ctor === "SetPath") {    return _p2._0;} else {    return _p2._0;}};
+   var dropIfCurrent = F2(function (update,current) {
+      return A2($Maybe.andThen,update,function (u) {    return _U.eq(extract(u),current) ? $Maybe.Nothing : update;});
+   });
+   var start = function (config) {
+      var route = F2(function (location,update) {
+         var _p3 = update;
+         if (_p3.ctor === "Just") {
+               if (_p3._0.ctor === "SetPath") {
+                     return _U.eq(_p3._0._0,location) ? _U.list([]) : config.location2action(location);
+                  } else {
+                     return _U.eq(_p3._0._0,location) ? _U.list([]) : config.location2action(location);
+                  }
+            } else {
+               return config.location2action(location);
+            }
+      });
+      var update2task = function (update) {
+         return function () {
+            var _p4 = update;
+            if (_p4.ctor === "SetPath") {
+                  return $History.setPath;
+               } else {
+                  return $History.replacePath;
+               }
+         }()(A2(list2hash,config.prefix,extract(update)));
+      };
+      var computeUpdate = function (maybeChange) {    return A2($Maybe.andThen,maybeChange,$Basics.uncurry(config.delta2update));};
+      var locations = A2($Signal.map,hash2list(config.prefix),$History.hash);
+      var processingActions = $Signal.mailbox(false);
+      var action2task = function (actions) {
+         var _p5 = actions;
+         if (_p5.ctor === "[]") {
+               return $Maybe.Nothing;
+            } else {
+               return $Maybe.Just(A2($Task.map,
+               $Basics.always({ctor: "_Tuple0"}),
+               $Task.sequence(A2($Basics._op["++"],
+               _U.list([A2($Signal.send,processingActions.address,true)]),
+               A2($Basics._op["++"],A2($List.map,$Signal.send(config.address),actions),_U.list([A2($Signal.send,processingActions.address,false)]))))));
+            }
+      };
+      var changes = $Signal$Extra.deltas(config.models);
+      var externalChanges = A2($Signal.map,
+      function (zipped) {
+         return $Basics.snd(zipped) ? $Maybe.Nothing : $Maybe.Just($Basics.fst(zipped));
+      },
+      A2($Signal.sampleOn,changes,A2($Signal$Extra.zip,changes,processingActions.signal)));
+      var possibleUpdates = A2($Signal.map,computeUpdate,externalChanges);
+      var actualUpdates = A3($Signal$Extra.passiveMap2,dropIfCurrent,possibleUpdates,locations);
+      var updateTasks = A3($Signal.filterMap,$Maybe.map(update2task),$Task.succeed({ctor: "_Tuple0"}),actualUpdates);
+      var actions = A3($Signal$Extra.passiveMap2,route,locations,actualUpdates);
+      var actionTasks = A3($Signal.filterMap,action2task,$Task.succeed({ctor: "_Tuple0"}),actions);
+      return A2($Signal.merge,actionTasks,updateTasks);
+   };
+   var ReplacePath = function (a) {    return {ctor: "ReplacePath",_0: a};};
+   var replace = ReplacePath;
+   var SetPath = function (a) {    return {ctor: "SetPath",_0: a};};
+   var set = SetPath;
+   var apply = F2(function (func,update) {
+      var _p6 = update;
+      if (_p6.ctor === "SetPath") {
+            return SetPath(func(_p6._0));
+         } else {
+            return ReplacePath(func(_p6._0));
+         }
+   });
+   var map = F2(function (func,update) {    return A2($Maybe.map,apply(func),update);});
+   return _elm.RouteHash.values = {_op: _op
+                                  ,set: set
+                                  ,replace: replace
+                                  ,apply: apply
+                                  ,map: map
+                                  ,extract: extract
+                                  ,defaultPrefix: defaultPrefix
+                                  ,start: start
+                                  ,Config: Config};
+};

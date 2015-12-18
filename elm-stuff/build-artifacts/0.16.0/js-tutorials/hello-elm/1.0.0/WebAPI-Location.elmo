@@ -1,0 +1,27 @@
+Elm.WebAPI = Elm.WebAPI || {};
+Elm.WebAPI.Location = Elm.WebAPI.Location || {};
+Elm.WebAPI.Location.make = function (_elm) {
+   "use strict";
+   _elm.WebAPI = _elm.WebAPI || {};
+   _elm.WebAPI.Location = _elm.WebAPI.Location || {};
+   if (_elm.WebAPI.Location.values) return _elm.WebAPI.Location.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$WebAPI$Location = Elm.Native.WebAPI.Location.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var AllowCache = {ctor: "AllowCache"};
+   var ForceServer = {ctor: "ForceServer"};
+   var nativeReload = $Native$WebAPI$Location.reload;
+   var reload = function (source) {
+      return nativeReload(function () {    var _p0 = source;if (_p0.ctor === "ForceServer") {    return true;} else {    return false;}}());
+   };
+   var location = $Native$WebAPI$Location.location;
+   var Location = F9(function (a,b,c,d,e,f,g,h,i) {    return {href: a,protocol: b,host: c,hostname: d,port$: e,pathname: f,search: g,hash: h,origin: i};});
+   return _elm.WebAPI.Location.values = {_op: _op,location: location,reload: reload,Location: Location,ForceServer: ForceServer,AllowCache: AllowCache};
+};

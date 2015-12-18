@@ -1,0 +1,23 @@
+Elm.Pages = Elm.Pages || {};
+Elm.Pages.Article = Elm.Pages.Article || {};
+Elm.Pages.Article.Model = Elm.Pages.Article.Model || {};
+Elm.Pages.Article.Model.make = function (_elm) {
+   "use strict";
+   _elm.Pages = _elm.Pages || {};
+   _elm.Pages.Article = _elm.Pages.Article || {};
+   _elm.Pages.Article.Model = _elm.Pages.Article.Model || {};
+   if (_elm.Pages.Article.Model.values) return _elm.Pages.Article.Model.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $ArticleForm$Model = Elm.ArticleForm.Model.make(_elm),
+   $ArticleList$Model = Elm.ArticleList.Model.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var initialModel = {articleForm: $ArticleForm$Model.initialModel,articleList: $ArticleList$Model.initialModel};
+   var Model = F2(function (a,b) {    return {articleForm: a,articleList: b};});
+   return _elm.Pages.Article.Model.values = {_op: _op,Model: Model,initialModel: initialModel};
+};

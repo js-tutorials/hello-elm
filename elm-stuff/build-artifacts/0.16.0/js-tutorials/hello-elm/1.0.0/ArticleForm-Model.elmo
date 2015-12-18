@@ -1,0 +1,35 @@
+Elm.ArticleForm = Elm.ArticleForm || {};
+Elm.ArticleForm.Model = Elm.ArticleForm.Model || {};
+Elm.ArticleForm.Model.make = function (_elm) {
+   "use strict";
+   _elm.ArticleForm = _elm.ArticleForm || {};
+   _elm.ArticleForm.Model = _elm.ArticleForm.Model || {};
+   if (_elm.ArticleForm.Model.values) return _elm.ArticleForm.Model.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var initialArticleForm = {label: "",body: "",image: $Maybe.Nothing,show: true};
+   var Model = F3(function (a,b,c) {    return {articleForm: a,postStatus: b,userMessage: c};});
+   var Error = function (a) {    return {ctor: "Error",_0: a};};
+   var None = {ctor: "None"};
+   var ArticleForm = F4(function (a,b,c,d) {    return {label: a,body: b,image: c,show: d};});
+   var Ready = {ctor: "Ready"};
+   var initialModel = {articleForm: initialArticleForm,postStatus: Ready,userMessage: None};
+   var Done = {ctor: "Done"};
+   var Busy = {ctor: "Busy"};
+   return _elm.ArticleForm.Model.values = {_op: _op
+                                          ,Busy: Busy
+                                          ,Done: Done
+                                          ,Ready: Ready
+                                          ,ArticleForm: ArticleForm
+                                          ,None: None
+                                          ,Error: Error
+                                          ,Model: Model
+                                          ,initialArticleForm: initialArticleForm
+                                          ,initialModel: initialModel};
+};

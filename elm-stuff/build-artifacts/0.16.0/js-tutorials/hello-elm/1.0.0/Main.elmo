@@ -1,0 +1,134 @@
+Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values) return _elm.Main.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $App$Model = Elm.App.Model.make(_elm),
+   $App$Router = Elm.App.Router.make(_elm),
+   $App$Update = Elm.App.Update.make(_elm),
+   $App$View = Elm.App.View.make(_elm),
+   $ArticleForm$Model = Elm.ArticleForm.Model.make(_elm),
+   $ArticleForm$Update = Elm.ArticleForm.Update.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Event = Elm.Event.make(_elm),
+   $Leaflet$Model = Elm.Leaflet.Model.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$Article$Update = Elm.Pages.Article.Update.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $RouteHash = Elm.RouteHash.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $StartApp = Elm.StartApp.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var ckeditor = Elm.Native.Port.make(_elm).inboundSignal("ckeditor",
+   "String",
+   function (v) {
+      return typeof v === "string" || typeof v === "object" && v instanceof String ? v : _U.badPort("a string",v);
+   });
+   var dropzoneUploadedFile = Elm.Native.Port.make(_elm).inboundSignal("dropzoneUploadedFile",
+   "Maybe.Maybe Int",
+   function (v) {
+      return v === null ? Elm.Maybe.make(_elm).Nothing : Elm.Maybe.make(_elm).Just(typeof v === "number" && isFinite(v) && Math.floor(v) === v ? v : _U.badPort("an integer",
+      v));
+   });
+   var ActivePagePort = F4(function (a,b,c,d) {    return {accessToken: a,activePage: b,backendUrl: c,postStatus: d};});
+   var selectEvent = Elm.Native.Port.make(_elm).inboundSignal("selectEvent",
+   "Maybe.Maybe Int",
+   function (v) {
+      return v === null ? Elm.Maybe.make(_elm).Nothing : Elm.Maybe.make(_elm).Just(typeof v === "number" && isFinite(v) && Math.floor(v) === v ? v : _U.badPort("an integer",
+      v));
+   });
+   var LeafletPort = F2(function (a,b) {    return {leaflet: a,events: b};});
+   var messages = $Signal.mailbox($App$Update.NoOp);
+   var app = $StartApp.start({init: $App$Update.init
+                             ,update: $App$Update.update
+                             ,view: $App$View.view
+                             ,inputs: _U.list([messages.signal
+                                              ,A2($Signal.map,
+                                              function (_p0) {
+                                                 return $App$Update.ChildArticleAction($Pages$Article$Update.ChildArticleFormAction($ArticleForm$Update.SetImageId(_p0)));
+                                              },
+                                              dropzoneUploadedFile)
+                                              ,A2($Signal.map,
+                                              function (_p1) {
+                                                 return $App$Update.ChildArticleAction($Pages$Article$Update.ChildArticleFormAction($ArticleForm$Update.UpdateBody(_p1)));
+                                              },
+                                              ckeditor)
+                                              ,A2($Signal.map,
+                                              function (_p2) {
+                                                 return $App$Update.ChildEventAction($Event.SelectEvent(_p2));
+                                              },
+                                              selectEvent)])});
+   var main = app.html;
+   var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
+   var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
+   $RouteHash.start({prefix: $RouteHash.defaultPrefix
+                    ,address: messages.address
+                    ,models: app.model
+                    ,delta2update: $App$Router.delta2update
+                    ,location2action: $App$Router.location2action}));
+   var mapManager = Elm.Native.Port.make(_elm).outboundSignal("mapManager",
+   function (v) {
+      return {leaflet: {markers: Elm.Native.List.make(_elm).toArray(v.leaflet.markers).map(function (v) {    return {id: v.id,lat: v.lat,lng: v.lng};})
+                       ,selectedMarker: v.leaflet.selectedMarker.ctor === "Nothing" ? null : v.leaflet.selectedMarker._0
+                       ,showMap: v.leaflet.showMap}
+             ,events: Elm.Native.List.make(_elm).toArray(v.events).map(function (v) {    return v;})};
+   },
+   function () {
+      var getLeaflet = function (model) {
+         return function (_p3) {
+            return function (_) {
+               return _.leaflet;
+            }(function (_) {    return _.events;}(_p3));
+         }(model);
+      };
+      var getEvents = function (model) {
+         return function (_p4) {
+            return function (_) {
+               return _.events;
+            }(function (_) {    return _.events;}(_p4));
+         }(model);
+      };
+      var getLeafletPort = function (model) {    return {events: A2($List.map,function (_) {    return _.id;},getEvents(model)),leaflet: getLeaflet(model)};};
+      return A2($Signal.map,getLeafletPort,app.model);
+   }());
+   var activePage = Elm.Native.Port.make(_elm).outboundSignal("activePage",
+   function (v) {
+      return {accessToken: v.accessToken,activePage: v.activePage,backendUrl: v.backendUrl,postStatus: v.postStatus};
+   },
+   function () {
+      var postStatusAsString = function (status) {
+         var _p5 = status;
+         switch (_p5.ctor)
+         {case "Busy": return "Busy";
+            case "Done": return "Done";
+            default: return "Ready";}
+      };
+      var pageAsString = function (page) {
+         var _p6 = page;
+         switch (_p6.ctor)
+         {case "Article": return "Article";
+            case "Event": return "Event";
+            case "GithubAuth": return "GithubAuth";
+            case "Login": return "Login";
+            case "PageNotFound": return "PageNotFound";
+            default: return "User";}
+      };
+      var getPortData = function (model) {
+         return {accessToken: model.accessToken
+                ,activePage: pageAsString(model.activePage)
+                ,backendUrl: function (_p7) {
+                   return function (_) {
+                      return _.backendUrl;
+                   }(function (_) {    return _.backendConfig;}(function (_) {    return _.config;}(_p7)));
+                }(model)
+                ,postStatus: postStatusAsString(model.article.articleForm.postStatus)};
+      };
+      return A2($Signal.map,getPortData,app.model);
+   }());
+   return _elm.Main.values = {_op: _op,app: app,main: main,messages: messages,LeafletPort: LeafletPort,ActivePagePort: ActivePagePort};
+};

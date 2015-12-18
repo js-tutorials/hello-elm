@@ -1,0 +1,36 @@
+Elm.Article = Elm.Article || {};
+Elm.Article.Decoder = Elm.Article.Decoder || {};
+Elm.Article.Decoder.make = function (_elm) {
+   "use strict";
+   _elm.Article = _elm.Article || {};
+   _elm.Article.Decoder = _elm.Article.Decoder || {};
+   if (_elm.Article.Decoder.values) return _elm.Article.Decoder.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Article$Model = Elm.Article.Model.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var decode = function () {
+      var decodeImage = A2($Json$Decode.at,_U.list(["styles"]),A2($Json$Decode._op[":="],"thumbnail",$Json$Decode.string));
+      var numberFloat = $Json$Decode.oneOf(_U.list([$Json$Decode.$float,A2($Json$Decode.customDecoder,$Json$Decode.string,$String.toFloat)]));
+      var number = $Json$Decode.oneOf(_U.list([$Json$Decode.$int,A2($Json$Decode.customDecoder,$Json$Decode.string,$String.toInt)]));
+      var decodeAuthor = A3($Json$Decode.object2,
+      $Article$Model.Author,
+      A2($Json$Decode._op[":="],"id",number),
+      A2($Json$Decode._op[":="],"label",$Json$Decode.string));
+      return A6($Json$Decode.object5,
+      $Article$Model.Model,
+      A2($Json$Decode._op[":="],"user",decodeAuthor),
+      $Json$Decode.oneOf(_U.list([A2($Json$Decode._op[":="],"body",$Json$Decode.string),$Json$Decode.succeed("")])),
+      A2($Json$Decode._op[":="],"id",number),
+      $Json$Decode.maybe(A2($Json$Decode._op[":="],"image",decodeImage)),
+      A2($Json$Decode._op[":="],"label",$Json$Decode.string));
+   }();
+   return _elm.Article.Decoder.values = {_op: _op,decode: decode};
+};

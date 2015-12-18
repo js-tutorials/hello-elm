@@ -1,0 +1,33 @@
+Elm.UrlParseUtil = Elm.UrlParseUtil || {};
+Elm.UrlParseUtil.make = function (_elm) {
+   "use strict";
+   _elm.UrlParseUtil = _elm.UrlParseUtil || {};
+   if (_elm.UrlParseUtil.values) return _elm.UrlParseUtil.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var firstOccurrence = F2(function (c,s) {
+      var _p0 = A2($String.indexes,$String.fromChar(c),s);
+      if (_p0.ctor === "[]") {
+            return $Maybe.Nothing;
+         } else {
+            return $Maybe.Just(_p0._0);
+         }
+   });
+   var splitAtFirst = F2(function (c,s) {
+      var _p1 = A2(firstOccurrence,c,s);
+      if (_p1.ctor === "Nothing") {
+            return {ctor: "_Tuple2",_0: s,_1: ""};
+         } else {
+            var _p2 = _p1._0;
+            return {ctor: "_Tuple2",_0: A2($String.left,_p2,s),_1: A2($String.dropLeft,_p2 + 1,s)};
+         }
+   });
+   return _elm.UrlParseUtil.values = {_op: _op,splitAtFirst: splitAtFirst,firstOccurrence: firstOccurrence};
+};

@@ -1,0 +1,59 @@
+Elm.Pages = Elm.Pages || {};
+Elm.Pages.Article = Elm.Pages.Article || {};
+Elm.Pages.Article.Update = Elm.Pages.Article.Update || {};
+Elm.Pages.Article.Update.make = function (_elm) {
+   "use strict";
+   _elm.Pages = _elm.Pages || {};
+   _elm.Pages.Article = _elm.Pages.Article || {};
+   _elm.Pages.Article.Update = _elm.Pages.Article.Update || {};
+   if (_elm.Pages.Article.Update.values) return _elm.Pages.Article.Update.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $ArticleForm$Update = Elm.ArticleForm.Update.make(_elm),
+   $ArticleList$Update = Elm.ArticleList.Update.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Config$Model = Elm.Config.Model.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$Article$Model = Elm.Pages.Article.Model.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var init = {ctor: "_Tuple2",_0: $Pages$Article$Model.initialModel,_1: $Effects.none};
+   var UpdateContext = F2(function (a,b) {    return {accessToken: a,backendConfig: b};});
+   var ChildArticleListAction = function (a) {    return {ctor: "ChildArticleListAction",_0: a};};
+   var ChildArticleFormAction = function (a) {    return {ctor: "ChildArticleFormAction",_0: a};};
+   var update = F3(function (context,action,model) {
+      var _p0 = action;
+      switch (_p0.ctor)
+      {case "Activate": return {ctor: "_Tuple2",_0: model,_1: $Effects.task($Task.succeed(ChildArticleListAction($ArticleList$Update.GetData)))};
+         case "ChildArticleFormAction": var _p1 = A3($ArticleForm$Update.update,context,_p0._0,model.articleForm);
+           var childModel = _p1._0;
+           var childEffects = _p1._1;
+           var maybeArticle = _p1._2;
+           var defaultEffects = _U.list([A2($Effects.map,ChildArticleFormAction,childEffects)]);
+           var effects$ = function () {
+              var _p2 = maybeArticle;
+              if (_p2.ctor === "Just") {
+                    return A2($List._op["::"],$Effects.task($Task.succeed(ChildArticleListAction($ArticleList$Update.AppendArticle(_p2._0)))),defaultEffects);
+                 } else {
+                    return defaultEffects;
+                 }
+           }();
+           return {ctor: "_Tuple2",_0: _U.update(model,{articleForm: childModel}),_1: $Effects.batch(effects$)};
+         default: var _p3 = A3($ArticleList$Update.update,context,_p0._0,model.articleList);
+           var childModel = _p3._0;
+           var childEffects = _p3._1;
+           return {ctor: "_Tuple2",_0: _U.update(model,{articleList: childModel}),_1: A2($Effects.map,ChildArticleListAction,childEffects)};}
+   });
+   var Activate = {ctor: "Activate"};
+   return _elm.Pages.Article.Update.values = {_op: _op
+                                             ,Activate: Activate
+                                             ,ChildArticleFormAction: ChildArticleFormAction
+                                             ,ChildArticleListAction: ChildArticleListAction
+                                             ,UpdateContext: UpdateContext
+                                             ,init: init
+                                             ,update: update};
+};

@@ -1,0 +1,30 @@
+Elm.Leaflet = Elm.Leaflet || {};
+Elm.Leaflet.Update = Elm.Leaflet.Update || {};
+Elm.Leaflet.Update.make = function (_elm) {
+   "use strict";
+   _elm.Leaflet = _elm.Leaflet || {};
+   _elm.Leaflet.Update = _elm.Leaflet.Update || {};
+   if (_elm.Leaflet.Update.values) return _elm.Leaflet.Update.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Leaflet$Model = Elm.Leaflet.Model.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var update = F2(function (action,model) {
+      var _p0 = action;
+      switch (_p0.ctor)
+      {case "ToggleMap": return {ctor: "_Tuple2",_0: _U.update(model,{showMap: $Basics.not(model.showMap)}),_1: $Effects.none};
+         case "SelectMarker": return {ctor: "_Tuple2",_0: _U.update(model,{selectedMarker: _p0._0}),_1: $Effects.none};
+         default: return {ctor: "_Tuple2",_0: _U.update(model,{selectedMarker: $Maybe.Nothing}),_1: $Effects.none};}
+   });
+   var UnselectMarker = {ctor: "UnselectMarker"};
+   var SelectMarker = function (a) {    return {ctor: "SelectMarker",_0: a};};
+   var ToggleMap = {ctor: "ToggleMap"};
+   var init = {ctor: "_Tuple2",_0: $Leaflet$Model.initialModel,_1: $Effects.none};
+   return _elm.Leaflet.Update.values = {_op: _op,init: init,ToggleMap: ToggleMap,SelectMarker: SelectMarker,UnselectMarker: UnselectMarker,update: update};
+};

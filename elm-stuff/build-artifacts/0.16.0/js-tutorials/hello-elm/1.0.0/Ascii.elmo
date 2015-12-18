@@ -1,0 +1,33 @@
+Elm.Ascii = Elm.Ascii || {};
+Elm.Ascii.make = function (_elm) {
+   "use strict";
+   _elm.Ascii = _elm.Ascii || {};
+   if (_elm.Ascii.values) return _elm.Ascii.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Array = Elm.Array.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var asciiCharsList = $String.toList(" !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+   var asciiCharsMap = function () {
+      var addToDict = F2(function (_p0,dict) {    var _p1 = _p0;return A3($Dict.insert,_p1._0,_p1._1,dict);});
+      var pairs = A3($List.map2,F2(function (v0,v1) {    return {ctor: "_Tuple2",_0: v0,_1: v1};}),asciiCharsList,_U.range(32,126));
+      return A3($List.foldl,addToDict,$Dict.empty,pairs);
+   }();
+   var isValid = function (string) {
+      var isAsciiChar = function ($char) {    return A2($Dict.member,$char,asciiCharsMap);};
+      return A2($List.all,isAsciiChar,$String.toList(string));
+   };
+   var toInt = function ($char) {    return A2($Result.fromMaybe,"char is not a supported ascii character",A2($Dict.get,$char,asciiCharsMap));};
+   var fromInt = function ($int) {
+      var array = $Array.fromList(asciiCharsList);
+      return A2($Result.fromMaybe,"integer has no corresponding ascii char",A2($Array.get,$int - 32,array));
+   };
+   return _elm.Ascii.values = {_op: _op,fromInt: fromInt,toInt: toInt,isValid: isValid};
+};

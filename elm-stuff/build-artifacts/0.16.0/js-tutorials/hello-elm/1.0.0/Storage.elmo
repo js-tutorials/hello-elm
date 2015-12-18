@@ -1,0 +1,43 @@
+Elm.Storage = Elm.Storage || {};
+Elm.Storage.make = function (_elm) {
+   "use strict";
+   _elm.Storage = _elm.Storage || {};
+   if (_elm.Storage.values) return _elm.Storage.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $Json$Encode = Elm.Json.Encode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$Storage = Elm.Native.Storage.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var length = $Native$Storage.length;
+   var keys = $Native$Storage.keys;
+   var clear = $Native$Storage.clear;
+   var removeItem = $Native$Storage.removeItem;
+   var setItem = $Native$Storage.setItem;
+   var getItemAsJson = $Native$Storage.getItemAsJson;
+   var getItem = F2(function (key,decoder) {
+      var decode = function (value) {
+         var _p0 = A2($Json$Decode.decodeValue,decoder,value);
+         if (_p0.ctor === "Ok") {
+               return $Task.succeed(_p0._0);
+            } else {
+               return $Task.fail("Failed");
+            }
+      };
+      return A2($Task.andThen,getItemAsJson(key),decode);
+   });
+   return _elm.Storage.values = {_op: _op
+                                ,getItemAsJson: getItemAsJson
+                                ,getItem: getItem
+                                ,setItem: setItem
+                                ,removeItem: removeItem
+                                ,clear: clear
+                                ,keys: keys
+                                ,length: length};
+};

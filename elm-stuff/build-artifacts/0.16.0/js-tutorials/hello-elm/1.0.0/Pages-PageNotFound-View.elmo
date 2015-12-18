@@ -1,0 +1,29 @@
+Elm.Pages = Elm.Pages || {};
+Elm.Pages.PageNotFound = Elm.Pages.PageNotFound || {};
+Elm.Pages.PageNotFound.View = Elm.Pages.PageNotFound.View || {};
+Elm.Pages.PageNotFound.View.make = function (_elm) {
+   "use strict";
+   _elm.Pages = _elm.Pages || {};
+   _elm.Pages.PageNotFound = _elm.Pages.PageNotFound || {};
+   _elm.Pages.PageNotFound.View = _elm.Pages.PageNotFound.View || {};
+   if (_elm.Pages.PageNotFound.View.values) return _elm.Pages.PageNotFound.View.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var view = A2($Html.div,
+   _U.list([$Html$Attributes.id("page-not-found"),$Html$Attributes.$class("container")]),
+   _U.list([A2($Html.div,
+   _U.list([$Html$Attributes.$class("wrapper text-center")]),
+   _U.list([A2($Html.div,
+   _U.list([$Html$Attributes.$class("box")]),
+   _U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text("This is a 404 page!")]))
+           ,A2($Html.a,_U.list([$Html$Attributes.href("#!/")]),_U.list([$Html.text("Back to safety")]))]))]))]));
+   return _elm.Pages.PageNotFound.View.values = {_op: _op,view: view};
+};

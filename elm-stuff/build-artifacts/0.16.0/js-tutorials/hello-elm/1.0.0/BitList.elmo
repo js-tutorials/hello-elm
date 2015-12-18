@@ -1,0 +1,52 @@
+Elm.BitList = Elm.BitList || {};
+Elm.BitList.make = function (_elm) {
+   "use strict";
+   _elm.BitList = _elm.BitList || {};
+   if (_elm.BitList.values) return _elm.BitList.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var partition = F2(function (size,list) {
+      return _U.cmp($List.length(list),size) < 1 ? _U.list([list]) : A2($List._op["::"],A2($List.take,size,list),A2(partition,size,A2($List.drop,size,list)));
+   });
+   var toByteReverse = function (bitList) {
+      var _p0 = bitList;
+      if (_p0.ctor === "[]") {
+            return 0;
+         } else {
+            if (_p0._0.ctor === "Off") {
+                  return 2 * toByteReverse(_p0._1);
+               } else {
+                  return 1 + 2 * toByteReverse(_p0._1);
+               }
+         }
+   };
+   var toByte = function (bitList) {    return toByteReverse($List.reverse(bitList));};
+   var Off = {ctor: "Off"};
+   var On = {ctor: "On"};
+   var fromNumber = function ($int) {
+      return _U.eq($int,0) ? _U.list([]) : _U.eq(A2($Basics._op["%"],$int,2),1) ? A2($List.append,
+      fromNumber($int / 2 | 0),
+      _U.list([On])) : _U.eq(A2($Basics._op["%"],$int,2),0) ? A2($List.append,fromNumber($int / 2 | 0),_U.list([Off])) : _U.list([]);
+   };
+   var fromNumberWithSize = F2(function (number,size) {
+      var bitList = fromNumber(number);
+      var paddingSize = size - $List.length(bitList);
+      return A2($List.append,A2($List.repeat,paddingSize,Off),bitList);
+   });
+   var fromByte = function ($byte) {    return A2(fromNumberWithSize,$byte,8);};
+   return _elm.BitList.values = {_op: _op
+                                ,On: On
+                                ,Off: Off
+                                ,fromNumber: fromNumber
+                                ,fromNumberWithSize: fromNumberWithSize
+                                ,fromByte: fromByte
+                                ,toByte: toByte
+                                ,toByteReverse: toByteReverse
+                                ,partition: partition};
+};

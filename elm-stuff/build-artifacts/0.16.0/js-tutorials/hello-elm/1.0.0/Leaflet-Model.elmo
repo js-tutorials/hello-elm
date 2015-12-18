@@ -1,0 +1,20 @@
+Elm.Leaflet = Elm.Leaflet || {};
+Elm.Leaflet.Model = Elm.Leaflet.Model || {};
+Elm.Leaflet.Model.make = function (_elm) {
+   "use strict";
+   _elm.Leaflet = _elm.Leaflet || {};
+   _elm.Leaflet.Model = _elm.Leaflet.Model || {};
+   if (_elm.Leaflet.Model.values) return _elm.Leaflet.Model.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var initialModel = {markers: _U.list([]),selectedMarker: $Maybe.Nothing,showMap: false};
+   var Model = F3(function (a,b,c) {    return {markers: a,selectedMarker: b,showMap: c};});
+   var Marker = F3(function (a,b,c) {    return {id: a,lat: b,lng: c};});
+   return _elm.Leaflet.Model.values = {_op: _op,Marker: Marker,Model: Model,initialModel: initialModel};
+};

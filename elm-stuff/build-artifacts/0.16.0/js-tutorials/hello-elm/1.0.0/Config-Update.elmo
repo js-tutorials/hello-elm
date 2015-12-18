@@ -1,0 +1,46 @@
+Elm.Config = Elm.Config || {};
+Elm.Config.Update = Elm.Config.Update || {};
+Elm.Config.Update.make = function (_elm) {
+   "use strict";
+   _elm.Config = _elm.Config || {};
+   _elm.Config.Update = _elm.Config.Update || {};
+   if (_elm.Config.Update.values) return _elm.Config.Update.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Config = Elm.Config.make(_elm),
+   $Config$Model = Elm.Config.Model.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $WebAPI$Location = Elm.WebAPI.Location.make(_elm);
+   var _op = {};
+   var update = F2(function (action,model) {
+      var _p0 = action;
+      if (_p0.ctor === "SetConfig") {
+            return {ctor: "_Tuple2",_0: _U.update(model,{backendConfig: _p0._0}),_1: $Effects.none};
+         } else {
+            return {ctor: "_Tuple2",_0: _U.update(model,{error: true}),_1: $Effects.none};
+         }
+   });
+   var SetError = {ctor: "SetError"};
+   var SetConfig = function (a) {    return {ctor: "SetConfig",_0: a};};
+   var getConfigFromUrl = function () {
+      var getAction = function (location) {
+         var config = $List.head(A2($List.filter,function (backend) {    return _U.eq(backend.hostname,location.hostname);},$Config.backends));
+         var _p1 = config;
+         if (_p1.ctor === "Just") {
+               return SetConfig(_p1._0);
+            } else {
+               return SetError;
+            }
+      };
+      var actionTask = A2($Task.map,getAction,$WebAPI$Location.location);
+      return $Effects.task(actionTask);
+   }();
+   var init = {ctor: "_Tuple2",_0: $Config$Model.initialModel,_1: getConfigFromUrl};
+   return _elm.Config.Update.values = {_op: _op,init: init,SetConfig: SetConfig,SetError: SetError,update: update,getConfigFromUrl: getConfigFromUrl};
+};

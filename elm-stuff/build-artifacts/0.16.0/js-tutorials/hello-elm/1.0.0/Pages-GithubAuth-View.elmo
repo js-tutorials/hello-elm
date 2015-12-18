@@ -1,0 +1,40 @@
+Elm.Pages = Elm.Pages || {};
+Elm.Pages.GithubAuth = Elm.Pages.GithubAuth || {};
+Elm.Pages.GithubAuth.View = Elm.Pages.GithubAuth.View || {};
+Elm.Pages.GithubAuth.View.make = function (_elm) {
+   "use strict";
+   _elm.Pages = _elm.Pages || {};
+   _elm.Pages.GithubAuth = _elm.Pages.GithubAuth || {};
+   _elm.Pages.GithubAuth.View = _elm.Pages.GithubAuth.View || {};
+   if (_elm.Pages.GithubAuth.View.values) return _elm.Pages.GithubAuth.View.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$GithubAuth$Model = Elm.Pages.GithubAuth.Model.make(_elm),
+   $Pages$GithubAuth$Update = Elm.Pages.GithubAuth.Update.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var view = F2(function (address,model) {
+      var spinner = A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-spinner fa-spin")]),_U.list([]));
+      var content = function () {
+         var _p0 = model.status;
+         if (_p0.ctor === "Error") {
+               return A2($Html.div,
+               _U.list([]),
+               _U.list([$Html.text(A2($Basics._op["++"],"Error:",_p0._0))
+                       ,A2($Html.a,_U.list([$Html$Attributes.href("#!/login")]),_U.list([$Html.text("Back to Login")]))]));
+            } else {
+               return spinner;
+            }
+      }();
+      return A2($Html.div,
+      _U.list([$Html$Attributes.id("github-auth-page")]),
+      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("container")]),_U.list([content]))]));
+   });
+   return _elm.Pages.GithubAuth.View.values = {_op: _op,view: view};
+};

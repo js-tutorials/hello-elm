@@ -1,0 +1,101 @@
+Elm.ArticleList = Elm.ArticleList || {};
+Elm.ArticleList.Update = Elm.ArticleList.Update || {};
+Elm.ArticleList.Update.make = function (_elm) {
+   "use strict";
+   _elm.ArticleList = _elm.ArticleList || {};
+   _elm.ArticleList.Update = _elm.ArticleList.Update || {};
+   if (_elm.ArticleList.Update.values) return _elm.ArticleList.Update.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Article$Decoder = Elm.Article.Decoder.make(_elm),
+   $Article$Model = Elm.Article.Model.make(_elm),
+   $ArticleList$Model = Elm.ArticleList.Model.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Config = Elm.Config.make(_elm),
+   $Config$Model = Elm.Config.Model.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $TaskTutorial = Elm.TaskTutorial.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var decodeData = A2($Json$Decode.at,_U.list(["data"]),$Json$Decode.list($Article$Decoder.decode));
+   var UpdateContext = F2(function (a,b) {    return {accessToken: a,backendConfig: b};});
+   var UpdateDataFromServer = F2(function (a,b) {    return {ctor: "UpdateDataFromServer",_0: a,_1: b};});
+   var getJson = F2(function (url,accessToken) {
+      var params = _U.list([{ctor: "_Tuple2",_0: "access_token",_1: accessToken},{ctor: "_Tuple2",_0: "sort",_1: "-id"}]);
+      var encodedUrl = A2($Http.url,url,params);
+      var httpTask = $Task.toResult(A2($Http.get,decodeData,encodedUrl));
+      var actionTask = A2($Task.andThen,
+      httpTask,
+      function (result) {
+         return A2($Task.map,function (timestamp$) {    return A2(UpdateDataFromServer,result,timestamp$);},$TaskTutorial.getCurrentTime);
+      });
+      return $Effects.task(actionTask);
+   });
+   var NoOp = {ctor: "NoOp"};
+   var GetDataFromServer = {ctor: "GetDataFromServer"};
+   var getDataFromCache = function (status) {
+      var actionTask = function () {
+         var _p0 = status;
+         if (_p0.ctor === "Fetched") {
+               return A2($Task.map,
+               function (currentTime) {
+                  return _U.cmp(_p0._0 + $Config.cacheTtl,currentTime) > 0 ? NoOp : GetDataFromServer;
+               },
+               $TaskTutorial.getCurrentTime);
+            } else {
+               return $Task.succeed(GetDataFromServer);
+            }
+      }();
+      return $Effects.task(actionTask);
+   };
+   var update = F3(function (context,action,model) {
+      var _p1 = action;
+      switch (_p1.ctor)
+      {case "AppendArticle": return {ctor: "_Tuple2",_0: _U.update(model,{articles: A2($List._op["::"],_p1._0,model.articles)}),_1: $Effects.none};
+         case "GetData": var effects = function () {
+              var _p2 = model.status;
+              if (_p2.ctor === "Fetching") {
+                    return $Effects.none;
+                 } else {
+                    return getDataFromCache(model.status);
+                 }
+           }();
+           return {ctor: "_Tuple2",_0: model,_1: effects};
+         case "GetDataFromServer": var backendUrl = function (_p3) {
+              return function (_) {
+                 return _.backendUrl;
+              }(function (_) {    return _.backendConfig;}(_p3));
+           }(context);
+           var url = A2($Basics._op["++"],backendUrl,"/api/v1.0/articles");
+           return {ctor: "_Tuple2",_0: _U.update(model,{status: $ArticleList$Model.Fetching}),_1: A2(getJson,url,context.accessToken)};
+         case "UpdateDataFromServer": var _p4 = _p1._0;
+           if (_p4.ctor === "Ok") {
+                 return {ctor: "_Tuple2",_0: _U.update(model,{articles: _p4._0,status: $ArticleList$Model.Fetched(_p1._1)}),_1: $Effects.none};
+              } else {
+                 return {ctor: "_Tuple2",_0: _U.update(model,{status: $ArticleList$Model.HttpError(_p4._0)}),_1: $Effects.none};
+              }
+         default: return {ctor: "_Tuple2",_0: model,_1: $Effects.none};}
+   });
+   var GetData = {ctor: "GetData"};
+   var AppendArticle = function (a) {    return {ctor: "AppendArticle",_0: a};};
+   var init = {ctor: "_Tuple2",_0: $ArticleList$Model.initialModel,_1: $Effects.none};
+   return _elm.ArticleList.Update.values = {_op: _op
+                                           ,init: init
+                                           ,AppendArticle: AppendArticle
+                                           ,GetData: GetData
+                                           ,GetDataFromServer: GetDataFromServer
+                                           ,NoOp: NoOp
+                                           ,UpdateDataFromServer: UpdateDataFromServer
+                                           ,UpdateContext: UpdateContext
+                                           ,update: update
+                                           ,getDataFromCache: getDataFromCache
+                                           ,getJson: getJson
+                                           ,decodeData: decodeData};
+};

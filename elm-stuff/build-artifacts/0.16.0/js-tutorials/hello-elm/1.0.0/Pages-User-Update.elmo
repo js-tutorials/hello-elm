@@ -1,0 +1,82 @@
+Elm.Pages = Elm.Pages || {};
+Elm.Pages.User = Elm.Pages.User || {};
+Elm.Pages.User.Update = Elm.Pages.User.Update || {};
+Elm.Pages.User.Update.make = function (_elm) {
+   "use strict";
+   _elm.Pages = _elm.Pages || {};
+   _elm.Pages.User = _elm.Pages.User || {};
+   _elm.Pages.User.Update = _elm.Pages.User.Update || {};
+   if (_elm.Pages.User.Update.values) return _elm.Pages.User.Update.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Company$Model = Elm.Company.Model.make(_elm),
+   $Config$Model = Elm.Config.Model.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$User$Decoder = Elm.Pages.User.Decoder.make(_elm),
+   $Pages$User$Model = Elm.Pages.User.Model.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var init = {ctor: "_Tuple2",_0: $Pages$User$Model.initialModel,_1: $Effects.none};
+   var UpdateDataFromServer = function (a) {    return {ctor: "UpdateDataFromServer",_0: a};};
+   var getJson = F2(function (url,accessToken) {
+      var encodedUrl = A2($Http.url,url,_U.list([{ctor: "_Tuple2",_0: "access_token",_1: accessToken}]));
+      return $Effects.task(A2($Task.map,UpdateDataFromServer,$Task.toResult(A2($Http.get,$Pages$User$Decoder.decode,encodedUrl))));
+   });
+   var SetAccessToken = function (a) {    return {ctor: "SetAccessToken",_0: a};};
+   var update = F3(function (context,action,model) {
+      var _p0 = action;
+      switch (_p0.ctor)
+      {case "NoOp": return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
+         case "GetDataFromServer": var backendUrl = function (_p1) {
+              return function (_) {
+                 return _.backendUrl;
+              }(function (_) {    return _.backendConfig;}(_p1));
+           }(context);
+           var url = A2($Basics._op["++"],backendUrl,"/api/v1.0/me");
+           return _U.eq(model.status,$Pages$User$Model.Fetching) || _U.eq(model.status,$Pages$User$Model.Fetched) ? {ctor: "_Tuple2"
+                                                                                                                    ,_0: model
+                                                                                                                    ,_1: $Effects.none} : {ctor: "_Tuple2"
+                                                                                                                                          ,_0: _U.update(model,
+                                                                                                                                          {status: $Pages$User$Model.Fetching})
+                                                                                                                                          ,_1: A2(getJson,
+                                                                                                                                          url,
+                                                                                                                                          context.accessToken)};
+         case "UpdateDataFromServer": var model$ = _U.update(model,{status: $Pages$User$Model.Fetched});
+           var _p2 = _p0._0;
+           if (_p2.ctor === "Ok") {
+                 return {ctor: "_Tuple2"
+                        ,_0: _U.update(model$,{id: _p2._0._0,name: $Pages$User$Model.LoggedIn(_p2._0._1),companies: _p2._0._2})
+                        ,_1: $Effects.none};
+              } else {
+                 var _p4 = _p2._0;
+                 var effects = function () {
+                    var _p3 = _p4;
+                    if (_p3.ctor === "BadResponse") {
+                          return _U.eq(_p3._0,401) ? $Effects.task($Task.succeed(SetAccessToken(""))) : $Effects.none;
+                       } else {
+                          return $Effects.none;
+                       }
+                 }();
+                 return {ctor: "_Tuple2",_0: _U.update(model$,{status: $Pages$User$Model.HttpError(_p4)}),_1: effects};
+              }
+         default: return {ctor: "_Tuple2",_0: _U.update(model,{accessToken: _p0._0}),_1: $Effects.none};}
+   });
+   var NoOp = function (a) {    return {ctor: "NoOp",_0: a};};
+   var GetDataFromServer = {ctor: "GetDataFromServer"};
+   var UpdateContext = F2(function (a,b) {    return {accessToken: a,backendConfig: b};});
+   return _elm.Pages.User.Update.values = {_op: _op
+                                          ,UpdateContext: UpdateContext
+                                          ,GetDataFromServer: GetDataFromServer
+                                          ,NoOp: NoOp
+                                          ,SetAccessToken: SetAccessToken
+                                          ,UpdateDataFromServer: UpdateDataFromServer
+                                          ,init: init
+                                          ,update: update
+                                          ,getJson: getJson};
+};

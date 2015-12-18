@@ -1,0 +1,124 @@
+Elm.Pages = Elm.Pages || {};
+Elm.Pages.Login = Elm.Pages.Login || {};
+Elm.Pages.Login.View = Elm.Pages.Login.View || {};
+Elm.Pages.Login.View.make = function (_elm) {
+   "use strict";
+   _elm.Pages = _elm.Pages || {};
+   _elm.Pages.Login = _elm.Pages.Login || {};
+   _elm.Pages.Login.View = _elm.Pages.Login.View || {};
+   if (_elm.Pages.Login.View.values) return _elm.Pages.Login.View.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Config$Model = Elm.Config.Model.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$Login$Model = Elm.Pages.Login.Model.make(_elm),
+   $Pages$Login$Update = Elm.Pages.Login.Update.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var view = F3(function (context,address,model) {
+      var userMessage = function () {
+         var _p0 = model.userMessage;
+         if (_p0.ctor === "None") {
+               return A2($Html.div,_U.list([]),_U.list([]));
+            } else {
+               return A2($Html.div,_U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "text-align",_1: "center"}]))]),_U.list([$Html.text(_p0._0)]));
+            }
+      }();
+      var spinner = A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-spinner fa-spin")]),_U.list([]));
+      var githubClientId = function (_p1) {    return function (_) {    return _.githubClientId;}(function (_) {    return _.backendConfig;}(_p1));}(context);
+      var githubUrl = A2($Basics._op["++"],"https://github.com/login/oauth/authorize?client_id=",A2($Basics._op["++"],githubClientId,"&scope=user:email"));
+      var githubLogin = A2($Html.div,
+      _U.list([$Html$Attributes.$class("btn btn-lg btn-primary btn-block")]),
+      _U.list([A2($Html.a,
+      _U.list([$Html$Attributes.href(githubUrl)]),
+      _U.list([A2($Html.i,
+              _U.list([$Html$Attributes.$class("fa fa-github"),$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "margin-right",_1: "10px"}]))]),
+              _U.list([]))
+              ,A2($Html.span,_U.list([]),_U.list([$Html.text("Login with GitHub")]))]))]));
+      var isFetchStatus = _U.eq(model.status,$Pages$Login$Model.Fetching) || _U.eq(model.status,$Pages$Login$Model.Fetched);
+      var modelForm = model.loginForm;
+      var isFormEmpty = $String.isEmpty(modelForm.name) || $String.isEmpty(modelForm.pass);
+      var loginForm = A2($Html.form,
+      _U.list([A2($Html$Events.onSubmit,address,$Pages$Login$Update.SubmitForm)
+              ,$Html$Attributes.action("javascript:void(0);")
+              ,$Html$Attributes.$class("form-signin")
+              ,$Html$Attributes.hidden(model.hasAccessTokenInStorage)]),
+      _U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text("Please login")]))
+              ,githubLogin
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.style(_U.list([{ctor: "_Tuple2",_0: "margin-bottom",_1: "20px"}
+                                                      ,{ctor: "_Tuple2",_0: "margin-top",_1: "20px"}
+                                                      ,{ctor: "_Tuple2",_0: "text-align",_1: "center"}]))]),
+              _U.list([$Html.text("OR")]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("input-group")]),
+              _U.list([A2($Html.span,
+                      _U.list([$Html$Attributes.$class("input-group-addon")]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("glyphicon glyphicon-user")]),_U.list([]))]))
+                      ,A2($Html.input,
+                      _U.list([$Html$Attributes.type$("text")
+                              ,$Html$Attributes.$class("form-control")
+                              ,$Html$Attributes.placeholder("Name")
+                              ,$Html$Attributes.value(model.loginForm.name)
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetValue,
+                              function (_p2) {
+                                 return A2($Signal.message,address,$Pages$Login$Update.UpdateName(_p2));
+                              })
+                              ,$Html$Attributes.size(40)
+                              ,$Html$Attributes.required(true)
+                              ,$Html$Attributes.disabled(isFetchStatus)]),
+                      _U.list([]))]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("input-group")]),
+              _U.list([A2($Html.span,
+                      _U.list([$Html$Attributes.$class("input-group-addon")]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-lock fa-lg")]),_U.list([]))]))
+                      ,A2($Html.input,
+                      _U.list([$Html$Attributes.type$("password")
+                              ,$Html$Attributes.$class("form-control")
+                              ,$Html$Attributes.placeholder("Password")
+                              ,$Html$Attributes.value(modelForm.pass)
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetValue,
+                              function (_p3) {
+                                 return A2($Signal.message,address,$Pages$Login$Update.UpdatePass(_p3));
+                              })
+                              ,$Html$Attributes.size(40)
+                              ,$Html$Attributes.required(true)
+                              ,$Html$Attributes.disabled(isFetchStatus)]),
+                      _U.list([]))]))
+              ,A2($Html.button,
+              _U.list([A2($Html$Events.onClick,address,$Pages$Login$Update.SubmitForm)
+                      ,$Html$Attributes.$class("btn btn-lg btn-primary btn-block")
+                      ,$Html$Attributes.disabled(isFetchStatus || isFormEmpty)]),
+              _U.list([A2($Html.span,_U.list([$Html$Attributes.hidden($Basics.not(isFetchStatus))]),_U.list([spinner]))
+                      ,A2($Html.span,_U.list([$Html$Attributes.hidden(isFetchStatus)]),_U.list([$Html.text("Login")]))]))]));
+      return A2($Html.div,
+      _U.list([$Html$Attributes.id("login-page")]),
+      _U.list([A2($Html.hr,_U.list([]),_U.list([]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("container")]),
+              _U.list([userMessage
+                      ,A2($Html.div,
+                      _U.list([$Html$Attributes.$class("wrapper")]),
+                      _U.list([loginForm
+                              ,A2($Html.div,
+                              _U.list([$Html$Attributes.$class("text-center")
+                                      ,$Html$Attributes.hidden($Basics.not(_U.eq(model.status,
+                                      $Pages$Login$Model.Fetching)) && $Basics.not(model.hasAccessTokenInStorage))]),
+                              _U.list([$Html.text("Loading ...")]))]))]))
+              ,A2($Html.hr,_U.list([]),_U.list([]))]));
+   });
+   var ViewContext = function (a) {    return {backendConfig: a};};
+   return _elm.Pages.Login.View.values = {_op: _op,ViewContext: ViewContext,view: view};
+};

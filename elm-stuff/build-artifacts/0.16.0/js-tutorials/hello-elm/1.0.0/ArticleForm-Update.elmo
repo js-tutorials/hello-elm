@@ -1,0 +1,110 @@
+Elm.ArticleForm = Elm.ArticleForm || {};
+Elm.ArticleForm.Update = Elm.ArticleForm.Update || {};
+Elm.ArticleForm.Update.make = function (_elm) {
+   "use strict";
+   _elm.ArticleForm = _elm.ArticleForm || {};
+   _elm.ArticleForm.Update = _elm.ArticleForm.Update || {};
+   if (_elm.ArticleForm.Update.values) return _elm.ArticleForm.Update.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Article$Decoder = Elm.Article.Decoder.make(_elm),
+   $Article$Model = Elm.Article.Model.make(_elm),
+   $ArticleForm$Model = Elm.ArticleForm.Model.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Config$Model = Elm.Config.Model.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $Json$Encode = Elm.Json.Encode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $Utils$Http = Elm.Utils.Http.make(_elm);
+   var _op = {};
+   var decodePostArticle = A2($Json$Decode.at,_U.list(["data","0"]),$Article$Decoder.decode);
+   var dataToJson = function (data) {
+      var intOrNull = function (maybeVal) {
+         var _p0 = maybeVal;
+         if (_p0.ctor === "Just") {
+               return $Json$Encode.$int(_p0._0);
+            } else {
+               return $Json$Encode.$null;
+            }
+      };
+      return A2($Json$Encode.encode,
+      0,
+      $Json$Encode.object(_U.list([{ctor: "_Tuple2",_0: "label",_1: $Json$Encode.string(data.label)}
+                                  ,{ctor: "_Tuple2",_0: "body",_1: $Json$Encode.string(data.body)}
+                                  ,{ctor: "_Tuple2",_0: "image",_1: intOrNull(data.image)}])));
+   };
+   var Context = F2(function (a,b) {    return {accessToken: a,backendConfig: b};});
+   var UpdatePostArticle = function (a) {    return {ctor: "UpdatePostArticle",_0: a};};
+   var postArticle = F3(function (url,accessToken,data) {
+      var params = _U.list([{ctor: "_Tuple2",_0: "access_token",_1: accessToken}]);
+      var encodedUrl = A2($Http.url,url,params);
+      return $Effects.task(A2($Task.map,UpdatePostArticle,$Task.toResult(A3($Http.post,decodePostArticle,encodedUrl,$Http.string(dataToJson(data))))));
+   });
+   var UpdateLabel = function (a) {    return {ctor: "UpdateLabel",_0: a};};
+   var UpdateBody = function (a) {    return {ctor: "UpdateBody",_0: a};};
+   var SetUserMessage = function (a) {    return {ctor: "SetUserMessage",_0: a};};
+   var SetImageId = function (a) {    return {ctor: "SetImageId",_0: a};};
+   var SubmitForm = {ctor: "SubmitForm"};
+   var ResetForm = {ctor: "ResetForm"};
+   var update = F3(function (context,action,model) {
+      var _p1 = action;
+      switch (_p1.ctor)
+      {case "ResetForm": return {ctor: "_Tuple3"
+                                ,_0: _U.update(model,{articleForm: $ArticleForm$Model.initialArticleForm,postStatus: $ArticleForm$Model.Ready})
+                                ,_1: $Effects.none
+                                ,_2: $Maybe.Nothing};
+         case "SetImageId": var articleForm = model.articleForm;
+           var articleForm$ = _U.update(articleForm,{image: _p1._0});
+           return {ctor: "_Tuple3",_0: _U.update(model,{articleForm: articleForm$}),_1: $Effects.none,_2: $Maybe.Nothing};
+         case "SetUserMessage": return {ctor: "_Tuple3",_0: _U.update(model,{userMessage: _p1._0}),_1: $Effects.none,_2: $Maybe.Nothing};
+         case "SubmitForm": var backendUrl = function (_p2) {
+              return function (_) {
+                 return _.backendUrl;
+              }(function (_) {    return _.backendConfig;}(_p2));
+           }(context);
+           var url = A2($Basics._op["++"],backendUrl,"/api/v1.0/articles");
+           return _U.eq(model.postStatus,$ArticleForm$Model.Ready) ? {ctor: "_Tuple3"
+                                                                     ,_0: _U.update(model,{postStatus: $ArticleForm$Model.Busy})
+                                                                     ,_1: A3(postArticle,url,context.accessToken,model.articleForm)
+                                                                     ,_2: $Maybe.Nothing} : {ctor: "_Tuple3",_0: model,_1: $Effects.none,_2: $Maybe.Nothing};
+         case "UpdateBody": var articleForm = model.articleForm;
+           var articleForm$ = _U.update(articleForm,{body: _p1._0});
+           return {ctor: "_Tuple3",_0: _U.update(model,{articleForm: articleForm$}),_1: $Effects.none,_2: $Maybe.Nothing};
+         case "UpdateLabel": var articleForm = model.articleForm;
+           var articleForm$ = _U.update(articleForm,{label: _p1._0});
+           return {ctor: "_Tuple3",_0: _U.update(model,{articleForm: articleForm$}),_1: $Effects.none,_2: $Maybe.Nothing};
+         default: var _p3 = _p1._0;
+           if (_p3.ctor === "Ok") {
+                 return {ctor: "_Tuple3"
+                        ,_0: _U.update(model,{postStatus: $ArticleForm$Model.Done})
+                        ,_1: $Effects.task($Task.succeed(ResetForm))
+                        ,_2: $Maybe.Just(_p3._0)};
+              } else {
+                 return {ctor: "_Tuple3"
+                        ,_0: model
+                        ,_1: $Effects.task($Task.succeed(SetUserMessage($ArticleForm$Model.Error($Utils$Http.getErrorMessageFromHttpResponse(_p3._0)))))
+                        ,_2: $Maybe.Nothing};
+              }}
+   });
+   var init = {ctor: "_Tuple2",_0: $ArticleForm$Model.initialModel,_1: $Effects.none};
+   return _elm.ArticleForm.Update.values = {_op: _op
+                                           ,init: init
+                                           ,ResetForm: ResetForm
+                                           ,SubmitForm: SubmitForm
+                                           ,SetImageId: SetImageId
+                                           ,SetUserMessage: SetUserMessage
+                                           ,UpdateBody: UpdateBody
+                                           ,UpdateLabel: UpdateLabel
+                                           ,UpdatePostArticle: UpdatePostArticle
+                                           ,Context: Context
+                                           ,update: update
+                                           ,postArticle: postArticle
+                                           ,dataToJson: dataToJson
+                                           ,decodePostArticle: decodePostArticle};
+};

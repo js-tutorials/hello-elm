@@ -1,0 +1,32 @@
+Elm.ArticleList = Elm.ArticleList || {};
+Elm.ArticleList.Model = Elm.ArticleList.Model || {};
+Elm.ArticleList.Model.make = function (_elm) {
+   "use strict";
+   _elm.ArticleList = _elm.ArticleList || {};
+   _elm.ArticleList.Model = _elm.ArticleList.Model || {};
+   if (_elm.ArticleList.Model.values) return _elm.ArticleList.Model.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Article$Model = Elm.Article.Model.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var Model = F2(function (a,b) {    return {articles: a,status: b};});
+   var HttpError = function (a) {    return {ctor: "HttpError",_0: a};};
+   var Fetched = function (a) {    return {ctor: "Fetched",_0: a};};
+   var Fetching = {ctor: "Fetching"};
+   var Init = {ctor: "Init"};
+   var initialModel = {articles: _U.list([]),status: Init};
+   return _elm.ArticleList.Model.values = {_op: _op
+                                          ,Init: Init
+                                          ,Fetching: Fetching
+                                          ,Fetched: Fetched
+                                          ,HttpError: HttpError
+                                          ,Model: Model
+                                          ,initialModel: initialModel};
+};

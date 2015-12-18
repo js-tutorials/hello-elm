@@ -1,0 +1,55 @@
+Elm.App = Elm.App || {};
+Elm.App.Router = Elm.App.Router || {};
+Elm.App.Router.make = function (_elm) {
+   "use strict";
+   _elm.App = _elm.App || {};
+   _elm.App.Router = _elm.App.Router || {};
+   if (_elm.App.Router.values) return _elm.App.Router.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $App$Model = Elm.App.Model.make(_elm),
+   $App$Update = Elm.App.Update.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Event = Elm.Event.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $RouteHash = Elm.RouteHash.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var location2action = function (list) {
+      var _p0 = list;
+      _v0_6: do {
+         if (_p0.ctor === "::") {
+               switch (_p0._0)
+               {case "auth": if (_p0._1.ctor === "::" && _p0._1._0 === "github" && _p0._1._1.ctor === "[]") {
+                          return A2($List._op["::"],$App$Update.SetActivePage($App$Model.GithubAuth),_U.list([]));
+                       } else {
+                          break _v0_6;
+                       }
+                  case "articles": return A2($List._op["::"],$App$Update.SetActivePage($App$Model.Article),_U.list([]));
+                  case "login": return A2($List._op["::"],$App$Update.SetActivePage($App$Model.Login),_U.list([]));
+                  case "my-account": return A2($List._op["::"],$App$Update.SetActivePage($App$Model.User),_U.list([]));
+                  case "events": return A2($List._op["::"],$App$Update.SetActivePage($App$Model.Event($Event.location2company(_p0._1))),_U.list([]));
+                  case "": return A2($List._op["::"],$App$Update.SetActivePage($App$Model.Event($Maybe.Nothing)),_U.list([]));
+                  default: break _v0_6;}
+            } else {
+               break _v0_6;
+            }
+      } while (false);
+      return A2($List._op["::"],$App$Update.SetActivePage($App$Model.PageNotFound),_U.list([]));
+   };
+   var delta2update = F2(function (previous,current) {
+      var _p1 = current.activePage;
+      switch (_p1.ctor)
+      {case "Article": return $Maybe.Just($RouteHash.set(_U.list(["articles"])));
+         case "Event": return A2($RouteHash.map,
+           F2(function (x,y) {    return A2($List._op["::"],x,y);})("events"),
+           A2($Event.delta2update,previous.events,current.events));
+         case "GithubAuth": return A2($RouteHash.map,function (_p2) {    return _U.list(["auth","github"]);},$Maybe.Nothing);
+         case "Login": return current.login.hasAccessTokenInStorage ? $Maybe.Nothing : $Maybe.Just($RouteHash.set(_U.list(["login"])));
+         case "PageNotFound": return $Maybe.Nothing;
+         default: return $Maybe.Just($RouteHash.set(_U.list(["my-account"])));}
+   });
+   return _elm.App.Router.values = {_op: _op,delta2update: delta2update,location2action: location2action};
+};

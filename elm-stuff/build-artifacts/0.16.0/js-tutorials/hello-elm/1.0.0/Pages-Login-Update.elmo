@@ -1,0 +1,114 @@
+Elm.Pages = Elm.Pages || {};
+Elm.Pages.Login = Elm.Pages.Login || {};
+Elm.Pages.Login.Update = Elm.Pages.Login.Update || {};
+Elm.Pages.Login.Update.make = function (_elm) {
+   "use strict";
+   _elm.Pages = _elm.Pages || {};
+   _elm.Pages.Login = _elm.Pages.Login || {};
+   _elm.Pages.Login.Update = _elm.Pages.Login.Update || {};
+   if (_elm.Pages.Login.Update.values) return _elm.Pages.Login.Update.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Base64 = Elm.Base64.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Config$Model = Elm.Config.Model.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$Login$Model = Elm.Pages.Login.Model.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Storage = Elm.Storage.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $Utils$Http = Elm.Utils.Http.make(_elm);
+   var _op = {};
+   var decodeAccessToken = A2($Json$Decode.at,_U.list(["access_token"]),$Json$Decode.string);
+   var encodeCredentials = function (_p0) {
+      var _p1 = _p0;
+      var base64 = $Base64.encode(A2($Basics._op["++"],_p1._0,A2($Basics._op["++"],":",_p1._1)));
+      var _p2 = base64;
+      if (_p2.ctor === "Ok") {
+            return _p2._0;
+         } else {
+            return "";
+         }
+   };
+   var Context = function (a) {    return {backendConfig: a};};
+   var SubmitForm = {ctor: "SubmitForm"};
+   var SetUserMessage = function (a) {    return {ctor: "SetUserMessage",_0: a};};
+   var SetAccessToken = function (a) {    return {ctor: "SetAccessToken",_0: a};};
+   var UpdatePass = function (a) {    return {ctor: "UpdatePass",_0: a};};
+   var UpdateName = function (a) {    return {ctor: "UpdateName",_0: a};};
+   var UpdateAccessTokenFromStorage = function (a) {    return {ctor: "UpdateAccessTokenFromStorage",_0: a};};
+   var getInputFromStorage = $Effects.task(A2($Task.map,UpdateAccessTokenFromStorage,$Task.toResult(A2($Storage.getItem,"access_token",$Json$Decode.string))));
+   var UpdateAccessTokenFromServer = function (a) {    return {ctor: "UpdateAccessTokenFromServer",_0: a};};
+   var getJson = F2(function (url,credentials) {
+      return $Effects.task(A2($Task.map,
+      UpdateAccessTokenFromServer,
+      $Task.toResult(A2($Http.fromJson,
+      decodeAccessToken,
+      A2($Http.send,
+      $Http.defaultSettings,
+      {verb: "GET",headers: _U.list([{ctor: "_Tuple2",_0: "Authorization",_1: A2($Basics._op["++"],"Basic ",credentials)}]),url: url,body: $Http.empty})))));
+   });
+   var update = F3(function (context,action,model) {
+      var _p3 = action;
+      switch (_p3.ctor)
+      {case "UpdateName": var loginForm = model.loginForm;
+           var updatedLoginForm = _U.update(loginForm,{name: _p3._0});
+           return {ctor: "_Tuple2",_0: _U.update(model,{loginForm: updatedLoginForm}),_1: $Effects.none};
+         case "UpdatePass": var loginForm = model.loginForm;
+           var updatedLoginForm = _U.update(loginForm,{pass: _p3._0});
+           return {ctor: "_Tuple2",_0: _U.update(model,{loginForm: updatedLoginForm}),_1: $Effects.none};
+         case "SubmitForm": var credentials = encodeCredentials({ctor: "_Tuple2",_0: model.loginForm.name,_1: model.loginForm.pass});
+           var backendUrl = function (_p4) {    return function (_) {    return _.backendUrl;}(function (_) {    return _.backendConfig;}(_p4));}(context);
+           var url = A2($Basics._op["++"],backendUrl,"/api/login-token");
+           return _U.eq(model.status,$Pages$Login$Model.Fetching) || _U.eq(model.status,$Pages$Login$Model.Fetched) ? {ctor: "_Tuple2"
+                                                                                                                      ,_0: model
+                                                                                                                      ,_1: $Effects.none} : {ctor: "_Tuple2"
+                                                                                                                                            ,_0: _U.update(model,
+                                                                                                                                            {status: $Pages$Login$Model.Fetching})
+                                                                                                                                            ,_1: $Effects.batch(_U.list([$Effects.task($Task.succeed(SetUserMessage($Pages$Login$Model.None)))
+                                                                                                                                                                        ,A2(getJson,
+                                                                                                                                                                        url,
+                                                                                                                                                                        credentials)]))};
+         case "SetAccessToken": return {ctor: "_Tuple2"
+                                       ,_0: _U.update(model,{accessToken: _p3._0,loginForm: A2($Pages$Login$Model.LoginForm,model.loginForm.name,"")})
+                                       ,_1: $Effects.none};
+         case "SetUserMessage": return {ctor: "_Tuple2",_0: _U.update(model,{userMessage: _p3._0}),_1: $Effects.none};
+         case "UpdateAccessTokenFromServer": var _p5 = _p3._0;
+           if (_p5.ctor === "Ok") {
+                 return {ctor: "_Tuple2",_0: _U.update(model,{status: $Pages$Login$Model.Fetched}),_1: $Effects.task($Task.succeed(SetAccessToken(_p5._0)))};
+              } else {
+                 var _p6 = _p5._0;
+                 var message = $Utils$Http.getErrorMessageFromHttpResponse(_p6);
+                 return {ctor: "_Tuple2"
+                        ,_0: _U.update(model,{status: $Pages$Login$Model.HttpError(_p6)})
+                        ,_1: $Effects.task($Task.succeed(SetUserMessage($Pages$Login$Model.Error(message))))};
+              }
+         default: var _p7 = _p3._0;
+           if (_p7.ctor === "Ok") {
+                 return {ctor: "_Tuple2",_0: model,_1: $Effects.task($Task.succeed(SetAccessToken(_p7._0)))};
+              } else {
+                 return {ctor: "_Tuple2",_0: _U.update(model,{hasAccessTokenInStorage: false}),_1: $Effects.none};
+              }}
+   });
+   var init = {ctor: "_Tuple2",_0: $Pages$Login$Model.initialModel,_1: getInputFromStorage};
+   return _elm.Pages.Login.Update.values = {_op: _op
+                                           ,init: init
+                                           ,UpdateAccessTokenFromServer: UpdateAccessTokenFromServer
+                                           ,UpdateAccessTokenFromStorage: UpdateAccessTokenFromStorage
+                                           ,UpdateName: UpdateName
+                                           ,UpdatePass: UpdatePass
+                                           ,SetAccessToken: SetAccessToken
+                                           ,SetUserMessage: SetUserMessage
+                                           ,SubmitForm: SubmitForm
+                                           ,Context: Context
+                                           ,update: update
+                                           ,getInputFromStorage: getInputFromStorage
+                                           ,encodeCredentials: encodeCredentials
+                                           ,getJson: getJson
+                                           ,decodeAccessToken: decodeAccessToken};
+};

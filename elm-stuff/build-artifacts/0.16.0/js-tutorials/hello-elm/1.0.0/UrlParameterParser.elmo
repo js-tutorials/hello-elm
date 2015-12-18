@@ -1,0 +1,37 @@
+Elm.UrlParameterParser = Elm.UrlParameterParser || {};
+Elm.UrlParameterParser.make = function (_elm) {
+   "use strict";
+   _elm.UrlParameterParser = _elm.UrlParameterParser || {};
+   if (_elm.UrlParameterParser.values) return _elm.UrlParameterParser.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
+   $UrlParseUtil = Elm.UrlParseUtil.make(_elm);
+   var _op = {};
+   var UrlParams = function (a) {    return {ctor: "UrlParams",_0: a};};
+   var parseParams = function (stringWithAmpersands) {
+      var eachParam = A2($String.split,"&",stringWithAmpersands);
+      var eachPair = A2($List.map,$UrlParseUtil.splitAtFirst(_U.chr("=")),eachParam);
+      return UrlParams($Dict.fromList(eachPair));
+   };
+   var Error = function (a) {    return {ctor: "Error",_0: a};};
+   var parseSearchString = function (startsWithQuestionMarkThenParams) {
+      var _p0 = $String.uncons(startsWithQuestionMarkThenParams);
+      if (_p0.ctor === "Nothing") {
+            return Error("No URL params");
+         } else {
+            if (_p0._0.ctor === "_Tuple2" && _p0._0._0.valueOf() === "?") {
+                  return parseParams(_p0._0._1);
+               } else {
+                  return Error("No URL params");
+               }
+         }
+   };
+   return _elm.UrlParameterParser.values = {_op: _op,parseSearchString: parseSearchString,Error: Error,UrlParams: UrlParams};
+};

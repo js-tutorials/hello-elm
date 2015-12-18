@@ -1,0 +1,239 @@
+Elm.App = Elm.App || {};
+Elm.App.Update = Elm.App.Update || {};
+Elm.App.Update.make = function (_elm) {
+   "use strict";
+   _elm.App = _elm.App || {};
+   _elm.App.Update = _elm.App.Update || {};
+   if (_elm.App.Update.values) return _elm.App.Update.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $App$Model = Elm.App.Model.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Company$Model = Elm.Company.Model.make(_elm),
+   $Config$Update = Elm.Config.Update.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Event = Elm.Event.make(_elm),
+   $Json$Encode = Elm.Json.Encode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Pages$Article$Update = Elm.Pages.Article.Update.make(_elm),
+   $Pages$GithubAuth$Update = Elm.Pages.GithubAuth.Update.make(_elm),
+   $Pages$Login$Update = Elm.Pages.Login.Update.make(_elm),
+   $Pages$User$Model = Elm.Pages.User.Model.make(_elm),
+   $Pages$User$Update = Elm.Pages.User.Update.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Storage = Elm.Storage.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var NoOpSetAccessToken = function (a) {    return {ctor: "NoOpSetAccessToken",_0: a};};
+   var sendInputToStorage = function (val) {
+      return $Effects.task(A2($Task.map,NoOpSetAccessToken,$Task.toResult(A2($Storage.setItem,"access_token",$Json$Encode.string(val)))));
+   };
+   var NoOpLogout = function (a) {    return {ctor: "NoOpLogout",_0: a};};
+   var removeStorageItem = $Effects.task(A2($Task.map,NoOpLogout,$Task.toMaybe($Storage.removeItem("access_token"))));
+   var NoOp = {ctor: "NoOp"};
+   var UpdateCompanies = function (a) {    return {ctor: "UpdateCompanies",_0: a};};
+   var SetConfigError = {ctor: "SetConfigError"};
+   var SetActivePage = function (a) {    return {ctor: "SetActivePage",_0: a};};
+   var SetAccessToken = function (a) {    return {ctor: "SetAccessToken",_0: a};};
+   var Logout = {ctor: "Logout"};
+   var ChildUserAction = function (a) {    return {ctor: "ChildUserAction",_0: a};};
+   var ChildLoginAction = function (a) {    return {ctor: "ChildLoginAction",_0: a};};
+   var ChildGithubAuthAction = function (a) {    return {ctor: "ChildGithubAuthAction",_0: a};};
+   var ChildEventAction = function (a) {    return {ctor: "ChildEventAction",_0: a};};
+   var ChildConfigAction = function (a) {    return {ctor: "ChildConfigAction",_0: a};};
+   var ChildArticleAction = function (a) {    return {ctor: "ChildArticleAction",_0: a};};
+   var initialEffects = _U.list([A2($Effects.map,ChildConfigAction,$Basics.snd($Config$Update.init))
+                                ,A2($Effects.map,ChildLoginAction,$Basics.snd($Pages$Login$Update.init))]);
+   var init = {ctor: "_Tuple2",_0: $App$Model.initialModel,_1: $Effects.batch(initialEffects)};
+   var update = F2(function (action,model) {
+      var _p0 = action;
+      switch (_p0.ctor)
+      {case "ChildArticleAction": var context = {accessToken: model.accessToken
+                                                ,backendConfig: function (_p1) {
+                                                   return function (_) {
+                                                      return _.backendConfig;
+                                                   }(function (_) {    return _.config;}(_p1));
+                                                }(model)};
+           var _p2 = A3($Pages$Article$Update.update,context,_p0._0,model.article);
+           var childModel = _p2._0;
+           var childEffects = _p2._1;
+           return {ctor: "_Tuple2",_0: _U.update(model,{article: childModel}),_1: A2($Effects.map,ChildArticleAction,childEffects)};
+         case "ChildConfigAction": var _p5 = _p0._0;
+           var _p3 = A2($Config$Update.update,_p5,model.config);
+           var childModel = _p3._0;
+           var childEffects = _p3._1;
+           var defaultEffects = _U.list([A2($Effects.map,ChildConfigAction,childEffects)]);
+           var effects$ = function () {
+              var _p4 = _p5;
+              if (_p4.ctor === "SetError") {
+                    return A2($List._op["::"],$Effects.task($Task.succeed(SetConfigError)),defaultEffects);
+                 } else {
+                    return defaultEffects;
+                 }
+           }();
+           return {ctor: "_Tuple2",_0: _U.update(model,{config: childModel}),_1: $Effects.batch(effects$)};
+         case "ChildEventAction": var context = {accessToken: model.accessToken
+                                                ,backendConfig: function (_p6) {
+                                                   return function (_) {
+                                                      return _.backendConfig;
+                                                   }(function (_) {    return _.config;}(_p6));
+                                                }(model)
+                                                ,companies: model.companies};
+           var _p7 = A3($Event.update,context,_p0._0,model.events);
+           var childModel = _p7._0;
+           var childEffects = _p7._1;
+           return {ctor: "_Tuple2",_0: _U.update(model,{events: childModel}),_1: A2($Effects.map,ChildEventAction,childEffects)};
+         case "ChildGithubAuthAction": var _p11 = _p0._0;
+           var context = {backendConfig: function (_p8) {
+              return function (_) {
+                 return _.backendConfig;
+              }(function (_) {    return _.config;}(_p8));
+           }(model)};
+           var _p9 = A3($Pages$GithubAuth$Update.update,context,_p11,model.githubAuth);
+           var childModel = _p9._0;
+           var childEffects = _p9._1;
+           var defaultEffect = A2($Effects.map,ChildGithubAuthAction,childEffects);
+           var defaultEffects = _U.list([defaultEffect]);
+           var effects$ = function () {
+              var _p10 = _p11;
+              if (_p10.ctor === "SetAccessToken") {
+                    return A2($List._op["::"],$Effects.task($Task.succeed(SetAccessToken(_p10._0))),defaultEffects);
+                 } else {
+                    return defaultEffects;
+                 }
+           }();
+           return {ctor: "_Tuple2",_0: _U.update(model,{githubAuth: childModel}),_1: $Effects.batch(effects$)};
+         case "ChildLoginAction": var _p15 = _p0._0;
+           var context = {backendConfig: function (_p12) {
+              return function (_) {
+                 return _.backendConfig;
+              }(function (_) {    return _.config;}(_p12));
+           }(model)};
+           var _p13 = A3($Pages$Login$Update.update,context,_p15,model.login);
+           var childModel = _p13._0;
+           var childEffects = _p13._1;
+           var defaultEffect = A2($Effects.map,ChildLoginAction,childEffects);
+           var defaultEffects = _U.list([defaultEffect]);
+           var effects$ = function () {
+              var _p14 = _p15;
+              if (_p14.ctor === "SetAccessToken") {
+                    return A2($List._op["::"],
+                    $Effects.task($Task.succeed(SetAccessToken(_p14._0))),
+                    A2($List._op["::"],$Effects.task($Task.succeed(ChildUserAction($Pages$User$Update.GetDataFromServer))),defaultEffects));
+                 } else {
+                    return defaultEffects;
+                 }
+           }();
+           return {ctor: "_Tuple2",_0: _U.update(model,{login: childModel}),_1: $Effects.batch(effects$)};
+         case "ChildUserAction": var _p22 = _p0._0;
+           var context = {accessToken: model.accessToken
+                         ,backendConfig: function (_p16) {
+                            return function (_) {
+                               return _.backendConfig;
+                            }(function (_) {    return _.config;}(_p16));
+                         }(model)};
+           var _p17 = A3($Pages$User$Update.update,context,_p22,model.user);
+           var childModel = _p17._0;
+           var childEffects = _p17._1;
+           var defaultEffect = A2($Effects.map,ChildUserAction,childEffects);
+           var defaultEffects = _U.list([defaultEffect]);
+           var model$ = _U.update(model,{user: childModel});
+           var _p18 = function () {
+              var _p19 = _p22;
+              switch (_p19.ctor)
+              {case "SetAccessToken": return {ctor: "_Tuple2"
+                                             ,_0: model$
+                                             ,_1: A2($List._op["::"],$Effects.task($Task.succeed(SetAccessToken(_p19._0))),defaultEffects)};
+                 case "UpdateDataFromServer": var _p20 = _p19._0;
+                   if (_p20.ctor === "Ok") {
+                         var nextPage = function () {
+                            var _p21 = model.nextPage;
+                            if (_p21.ctor === "Just") {
+                                  return _p21._0;
+                               } else {
+                                  return $App$Model.Event($Maybe.Nothing);
+                               }
+                         }();
+                         return {ctor: "_Tuple2"
+                                ,_0: _U.update(model$,{nextPage: $Maybe.Nothing})
+                                ,_1: A2($List._op["::"],
+                                $Effects.task($Task.succeed(UpdateCompanies(_p20._0._2))),
+                                A2($List._op["::"],$Effects.task($Task.succeed(SetActivePage(nextPage))),defaultEffects))};
+                      } else {
+                         return {ctor: "_Tuple2",_0: model$,_1: defaultEffects};
+                      }
+                 default: return {ctor: "_Tuple2",_0: model$,_1: defaultEffects};}
+           }();
+           var model$$ = _p18._0;
+           var effects$ = _p18._1;
+           return {ctor: "_Tuple2",_0: model$$,_1: $Effects.batch(effects$)};
+         case "Logout": return {ctor: "_Tuple2",_0: $App$Model.initialModel,_1: $Effects.batch(A2($List._op["::"],removeStorageItem,initialEffects))};
+         case "SetAccessToken": var _p23 = _p0._0;
+           var defaultEffects = _U.list([sendInputToStorage(_p23)]);
+           var effects$ = $String.isEmpty(_p23) ? A2($List._op["::"],$Effects.task($Task.succeed(Logout)),defaultEffects) : A2($List._op["::"],
+           $Effects.task($Task.succeed(ChildUserAction($Pages$User$Update.GetDataFromServer))),
+           defaultEffects);
+           return {ctor: "_Tuple2",_0: _U.update(model,{accessToken: _p23}),_1: $Effects.batch(effects$)};
+         case "SetActivePage": var _p28 = _p0._0;
+           var currentPageEffects = function () {
+              var _p24 = model.activePage;
+              if (_p24.ctor === "Event") {
+                    return $Effects.task($Task.succeed(ChildEventAction($Event.Deactivate)));
+                 } else {
+                    return $Effects.none;
+                 }
+           }();
+           var _p25 = function () {
+              if (_U.eq(model.user.name,$Pages$User$Model.Anonymous)) {
+                    var _p26 = _p28;
+                    switch (_p26.ctor)
+                    {case "GithubAuth": return {ctor: "_Tuple2",_0: $App$Model.GithubAuth,_1: model.nextPage};
+                       case "Login": return {ctor: "_Tuple2",_0: $App$Model.Login,_1: model.nextPage};
+                       case "PageNotFound": return {ctor: "_Tuple2",_0: _p28,_1: $Maybe.Just(_p28)};
+                       default: return {ctor: "_Tuple2",_0: $App$Model.Login,_1: $Maybe.Just(_p28)};}
+                 } else return {ctor: "_Tuple2",_0: _p28,_1: $Maybe.Nothing};
+           }();
+           var page$ = _p25._0;
+           var nextPage = _p25._1;
+           var newPageEffects = function () {
+              var _p27 = page$;
+              switch (_p27.ctor)
+              {case "Article": return $Effects.task($Task.succeed(ChildArticleAction($Pages$Article$Update.Activate)));
+                 case "Event": return $Effects.task($Task.succeed(ChildEventAction($Event.Activate(_p27._0))));
+                 case "GithubAuth": return $Effects.task($Task.succeed(ChildGithubAuthAction($Pages$GithubAuth$Update.Activate)));
+                 default: return $Effects.none;}
+           }();
+           return _U.eq(model.activePage,page$) ? {ctor: "_Tuple2",_0: _U.update(model,{nextPage: nextPage}),_1: $Effects.none} : {ctor: "_Tuple2"
+                                                                                                                                  ,_0: _U.update(model,
+                                                                                                                                  {activePage: page$
+                                                                                                                                  ,nextPage: nextPage})
+                                                                                                                                  ,_1: $Effects.batch(_U.list([currentPageEffects
+                                                                                                                                                              ,newPageEffects]))};
+         case "SetConfigError": return {ctor: "_Tuple2",_0: _U.update(model,{configError: true}),_1: $Effects.none};
+         case "UpdateCompanies": return {ctor: "_Tuple2",_0: _U.update(model,{companies: _p0._0}),_1: $Effects.none};
+         default: return {ctor: "_Tuple2",_0: model,_1: $Effects.none};}
+   });
+   return _elm.App.Update.values = {_op: _op
+                                   ,initialEffects: initialEffects
+                                   ,init: init
+                                   ,ChildArticleAction: ChildArticleAction
+                                   ,ChildConfigAction: ChildConfigAction
+                                   ,ChildEventAction: ChildEventAction
+                                   ,ChildGithubAuthAction: ChildGithubAuthAction
+                                   ,ChildLoginAction: ChildLoginAction
+                                   ,ChildUserAction: ChildUserAction
+                                   ,Logout: Logout
+                                   ,SetAccessToken: SetAccessToken
+                                   ,SetActivePage: SetActivePage
+                                   ,SetConfigError: SetConfigError
+                                   ,UpdateCompanies: UpdateCompanies
+                                   ,NoOp: NoOp
+                                   ,NoOpLogout: NoOpLogout
+                                   ,NoOpSetAccessToken: NoOpSetAccessToken
+                                   ,update: update
+                                   ,sendInputToStorage: sendInputToStorage
+                                   ,removeStorageItem: removeStorageItem};
+};

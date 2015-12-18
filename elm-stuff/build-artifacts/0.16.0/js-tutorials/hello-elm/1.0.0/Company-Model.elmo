@@ -1,0 +1,19 @@
+Elm.Company = Elm.Company || {};
+Elm.Company.Model = Elm.Company.Model || {};
+Elm.Company.Model.make = function (_elm) {
+   "use strict";
+   _elm.Company = _elm.Company || {};
+   _elm.Company.Model = _elm.Company.Model || {};
+   if (_elm.Company.Model.values) return _elm.Company.Model.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var Model = F2(function (a,b) {    return {id: a,label: b};});
+   var initialModel = A2(Model,0,"");
+   return _elm.Company.Model.values = {_op: _op,Model: Model,initialModel: initialModel};
+};

@@ -1,0 +1,47 @@
+Elm.ArticleList = Elm.ArticleList || {};
+Elm.ArticleList.View = Elm.ArticleList.View || {};
+Elm.ArticleList.View.make = function (_elm) {
+   "use strict";
+   _elm.ArticleList = _elm.ArticleList || {};
+   _elm.ArticleList.View = _elm.ArticleList.View || {};
+   if (_elm.ArticleList.View.values) return _elm.ArticleList.View.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Article$Model = Elm.Article.Model.make(_elm),
+   $ArticleList$Model = Elm.ArticleList.Model.make(_elm),
+   $ArticleList$Update = Elm.ArticleList.Update.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Json$Encode = Elm.Json.Encode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var viewArticles = function (article) {
+      var image = function () {
+         var _p0 = article.image;
+         if (_p0.ctor === "Just") {
+               return A2($Html.img,_U.list([$Html$Attributes.src(_p0._0)]),_U.list([]));
+            } else {
+               return A2($Html.div,_U.list([]),_U.list([]));
+            }
+      }();
+      return A2($Html.li,
+      _U.list([]),
+      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(article.label)]))
+              ,A2($Html.div,_U.list([A2($Html$Attributes.property,"innerHTML",$Json$Encode.string(article.body))]),_U.list([]))
+              ,image]));
+   };
+   var viewRecentArticles = function (articles) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("wrapper -suffix")]),
+      _U.list([A2($Html.h3,
+              _U.list([$Html$Attributes.$class("title")]),
+              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-file-o icon")]),_U.list([])),$Html.text("Recent articles")]))
+              ,A2($Html.ul,_U.list([$Html$Attributes.$class("articles")]),A2($List.map,viewArticles,articles))]));
+   };
+   var view = F2(function (address,model) {    return viewRecentArticles(model.articles);});
+   return _elm.ArticleList.View.values = {_op: _op,view: view,viewRecentArticles: viewRecentArticles,viewArticles: viewArticles};
+};

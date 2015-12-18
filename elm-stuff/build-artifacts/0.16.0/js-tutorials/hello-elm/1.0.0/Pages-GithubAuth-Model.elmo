@@ -1,0 +1,34 @@
+Elm.Pages = Elm.Pages || {};
+Elm.Pages.GithubAuth = Elm.Pages.GithubAuth || {};
+Elm.Pages.GithubAuth.Model = Elm.Pages.GithubAuth.Model || {};
+Elm.Pages.GithubAuth.Model.make = function (_elm) {
+   "use strict";
+   _elm.Pages = _elm.Pages || {};
+   _elm.Pages.GithubAuth = _elm.Pages.GithubAuth || {};
+   _elm.Pages.GithubAuth.Model = _elm.Pages.GithubAuth.Model || {};
+   if (_elm.Pages.GithubAuth.Model.values) return _elm.Pages.GithubAuth.Model.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var Model = F3(function (a,b,c) {    return {accessToken: a,status: b,code: c};});
+   var HttpError = function (a) {    return {ctor: "HttpError",_0: a};};
+   var Fetched = {ctor: "Fetched"};
+   var Fetching = {ctor: "Fetching"};
+   var Error = function (a) {    return {ctor: "Error",_0: a};};
+   var Init = {ctor: "Init"};
+   var initialModel = {accessToken: "",status: Init,code: $Maybe.Nothing};
+   return _elm.Pages.GithubAuth.Model.values = {_op: _op
+                                               ,Init: Init
+                                               ,Error: Error
+                                               ,Fetching: Fetching
+                                               ,Fetched: Fetched
+                                               ,HttpError: HttpError
+                                               ,Model: Model
+                                               ,initialModel: initialModel};
+};

@@ -1,0 +1,20 @@
+{
+  "name": "hello-elm",
+  "version": "0.1.0",
+  "homepage": "https://github.com/js-tutorials/hello-elm",
+  "authors": [
+    "Duc Nguyen <ducnn01@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "dropzone": "~4.2.0",
+    "leaflet": "~0.7.5"
+  }
+}
